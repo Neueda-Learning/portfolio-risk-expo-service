@@ -4,12 +4,12 @@ import com.risk_busters.app.dto.ExposureResponseDTO;
 import com.risk_busters.app.dto.LimitDetailDTO;
 import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
 import com.risk_busters.app.model.Limit;
+import com.risk_busters.app.model.LimitStatus;
 import com.risk_busters.app.model.Position;
 import com.risk_busters.app.model.Portfolio;
 import com.risk_busters.app.repository.LimitRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
 import com.risk_busters.app.repository.PositionRepository;
-import com.risk_busters.app.repository.PriceHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +27,6 @@ public class PortfolioRiskService {
     
     private final PortfolioRepository portfolioRepository;
     private final PositionRepository positionRepository;
-    private final PriceHistoryRepository priceHistoryRepository;
     private final LimitRepository limitRepository;
     
     /**
@@ -38,17 +37,10 @@ public class PortfolioRiskService {
                 .orElseThrow(() -> new RuntimeException("Portfolio not found with id: " + portfolioId));
         
         List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
-        BigDecimal totalExposure = BigDecimal.ZERO;
-        
-        for (Position position : positions) {
-            // Get latest price for the instrument
-            var priceOptional = priceHistoryRepository.findLatestPriceByInstrumentId(position.getInstrument().getInstrumentId());
-            if (priceOptional.isPresent()) {
-                BigDecimal price = priceOptional.get().getClosePrice();
-                BigDecimal positionValue = position.getQuantity().multiply(price);
-                totalExposure = totalExposure.add(positionValue);
-            }
-        }
+        BigDecimal totalExposure = positions.stream()
+                .map(Position::getMarketValueBase)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         Integer positionCount = positionRepository.countByPortfolioId(portfolioId);
         
@@ -92,26 +84,35 @@ public class PortfolioRiskService {
      * Build limit detail with current utilisation
      */
     private LimitDetailDTO buildLimitDetail(Limit limit, BigDecimal totalExposure) {
-        BigDecimal currentUtilisation = totalExposure;
-        BigDecimal utilisationPct = BigDecimal.ZERO;
-        boolean isBreached = false;
-        
-        if (limit.getLimitValue().compareTo(BigDecimal.ZERO) > 0) {
-            utilisationPct = currentUtilisation
+        BigDecimal currentValue = limit.getCurrentValue() != null ? limit.getCurrentValue() : totalExposure;
+        BigDecimal utilisationPct = limit.getUtilisationPct();
+
+        if (utilisationPct == null
+                && currentValue != null
+                && limit.getLimitValue() != null
+                && limit.getLimitValue().compareTo(BigDecimal.ZERO) > 0) {
+            utilisationPct = currentValue
                     .divide(limit.getLimitValue(), 4, RoundingMode.HALF_UP)
                     .multiply(new BigDecimal("100"));
-            isBreached = currentUtilisation.compareTo(limit.getLimitValue()) > 0;
         }
+
+        boolean isBreached = LimitStatus.BREACH.equals(limit.getStatus())
+                || (currentValue != null
+                && limit.getLimitValue() != null
+                && currentValue.compareTo(limit.getLimitValue()) > 0);
         
         return LimitDetailDTO.builder()
                 .limitId(limit.getLimitId())
-                .limitType(limit.getLimitType())
+                .limitType(limit.getLimitType() != null ? limit.getLimitType().name() : null)
+                .limitMetric(limit.getLimitMetric())
                 .limitValue(limit.getLimitValue())
-                .currentUtilisation(currentUtilisation)
+                .warningThreshold(limit.getWarningThreshold())
+                .currentValue(currentValue)
                 .utilisationPct(utilisationPct)
-                .warningPct(limit.getWarningPct())
+                .status(limit.getStatus() != null ? limit.getStatus().name() : null)
+                .effectiveFrom(limit.getEffectiveFrom())
+                .effectiveTo(limit.getEffectiveTo())
                 .isBreached(isBreached)
-                .currency(limit.getCurrency())
                 .build();
     }
 }
