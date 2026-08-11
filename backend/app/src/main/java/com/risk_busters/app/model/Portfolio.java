@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -18,26 +20,37 @@ import java.util.List;
 public class Portfolio {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "portfolio_id")
     private Integer portfolioId;
+
+    @Column(name = "portfolio_code", nullable = false, unique = true, length = 20)
+    private String portfolioCode;
     
-    @Column(nullable = false)
+    @Column(name = "portfolio_name", nullable = false, length = 100)
     private String portfolioName;
-    
-    @Column(nullable = false)
-    private String baseCurrency;
     
     @Enumerated(EnumType.STRING)
     @Column(name = "portfolio_type", length = 20, nullable = false)
     private PortfolioType portfolioType;
+
+    @Column(name = "base_currency", nullable = false, length = 3)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    private String baseCurrency;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal aum;
+
+    @Column(length = 50)
+    private String benchmark;
+
+    @Column(name = "risk_mandate", length = 200)
+    private String riskMandate;
     
-    private String managerName;
+    @Column(name = "manager", length = 60)
+    private String manager;
     
-    @Column(nullable = false)
+    @Column(name = "is_active", nullable = false)
     private Boolean isActive;
-    
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
     
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Position> positions;
