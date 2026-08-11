@@ -1,0 +1,78 @@
+-- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
+-- Scenario Risk Factor Junction Data
+-- Generated: 2026-03-26 19:51:57
+--
+-- Consistent with DDL schema and FK requirements.
+-- Load order: ... → 05_data_stress_scenarios.sql → 13_data_scenario_risk_factors.sql → 06_data_stress_results.sql
+
+INSERT INTO scenario_risk_factor (scenario_id, factor_id, shock_value, shock_direction, description) VALUES
+-- GFC2008 Scenario (scenario_id 1)
+(1, 1, 50.00, 'DOWN', 'FTSE 100 Index shock in GFC 2008'),
+(1, 2, 50.00, 'DOWN', 'S&P 500 Index shock in GFC 2008'),
+(1, 3, 50.00, 'DOWN', 'STOXX 600 Index shock in GFC 2008'),
+(1, 4, 50.00, 'DOWN', 'MSCI Asia-Pacific shock in GFC 2008'),
+(1, 5, 50.00, 'DOWN', 'MSCI Emerging Markets shock in GFC 2008'),
+(1, 6, 100.00, 'DOWN', 'UK Gilt 10Y Yield -100bps shock in GFC 2008'),
+(1, 7, 100.00, 'DOWN', 'US Treasury 10Y Yield -100bps shock in GFC 2008'),
+(1, 8, 100.00, 'DOWN', 'German Bund 10Y Yield -100bps shock in GFC 2008'),
+(1, 9, 300.00, 'UP', 'iTraxx Europe CDS +300bps in GFC 2008'),
+(1, 10, 300.00, 'UP', 'iTraxx Crossover HY Spread +300bps in GFC 2008'),
+(1, 13, 62.00, 'UP', 'VIX spike to 80 in GFC 2008'),
+(1, 14, 62.00, 'UP', 'VSTOXX spike in GFC 2008'),
+-- COVID2020 Scenario (scenario_id 2)
+(2, 1, 35.00, 'DOWN', 'FTSE 100 Index shock in COVID 2020'),
+(2, 2, 35.00, 'DOWN', 'S&P 500 Index shock in COVID 2020'),
+(2, 3, 35.00, 'DOWN', 'STOXX 600 Index shock in COVID 2020'),
+(2, 4, 35.00, 'DOWN', 'MSCI Asia-Pacific shock in COVID 2020'),
+(2, 5, 35.00, 'DOWN', 'MSCI Emerging Markets shock in COVID 2020'),
+(2, 6, 50.00, 'DOWN', 'UK Gilt 10Y Yield -50bps shock in COVID 2020'),
+(2, 7, 50.00, 'DOWN', 'US Treasury 10Y Yield -50bps shock in COVID 2020'),
+(2, 8, 50.00, 'DOWN', 'German Bund 10Y Yield -50bps shock in COVID 2020'),
+(2, 9, 200.00, 'UP', 'iTraxx Europe CDS +200bps in COVID 2020'),
+(2, 10, 200.00, 'UP', 'iTraxx Crossover HY Spread +200bps in COVID 2020'),
+(2, 13, 66.00, 'UP', 'VIX spike to 82 in COVID 2020'),
+(2, 14, 66.00, 'UP', 'VSTOXX spike in COVID 2020'),
+-- BREXIT Scenario (scenario_id 3)
+(3, 1, 12.00, 'DOWN', 'FTSE 100 Index shock in BREXIT'),
+(3, 2, 12.00, 'DOWN', 'S&P 500 Index shock in BREXIT'),
+(3, 3, 12.00, 'DOWN', 'STOXX 600 Index shock in BREXIT'),
+(3, 4, 12.00, 'DOWN', 'MSCI Asia-Pacific shock in BREXIT'),
+(3, 5, 12.00, 'DOWN', 'MSCI Emerging Markets shock in BREXIT'),
+(3, 9, 100.00, 'UP', 'iTraxx Europe CDS +100bps in BREXIT'),
+(3, 10, 100.00, 'UP', 'iTraxx Crossover HY Spread +100bps in BREXIT'),
+(3, 11, 10.00, 'DOWN', 'EUR/USD weakness in BREXIT'),
+(3, 12, 10.00, 'DOWN', 'GBP/USD weakness in BREXIT'),
+(3, 19, 10.00, 'DOWN', 'JPY/USD reaction in BREXIT'),
+(3, 20, 10.00, 'DOWN', 'AUD/USD weakness in BREXIT'),
+(3, 13, 30.00, 'UP', 'VIX spike +30 in BREXIT'),
+(3, 14, 30.00, 'UP', 'VSTOXX spike +30 in BREXIT'),
+-- UKRAINE Scenario (scenario_id 4)
+(4, 1, 15.00, 'DOWN', 'FTSE 100 Index shock in UKRAINE'),
+(4, 2, 15.00, 'DOWN', 'S&P 500 Index shock in UKRAINE'),
+(4, 3, 15.00, 'DOWN', 'STOXX 600 Index shock in UKRAINE'),
+(4, 4, 15.00, 'DOWN', 'MSCI Asia-Pacific shock in UKRAINE'),
+(4, 5, 15.00, 'DOWN', 'MSCI Emerging Markets shock in UKRAINE'),
+(4, 6, 50.00, 'UP', 'UK Gilt 10Y Yield +50bps in UKRAINE'),
+(4, 7, 50.00, 'UP', 'US Treasury 10Y Yield +50bps in UKRAINE'),
+(4, 8, 50.00, 'UP', 'German Bund 10Y Yield +50bps in UKRAINE'),
+(4, 9, 80.00, 'UP', 'iTraxx Europe CDS +80bps in UKRAINE'),
+(4, 10, 80.00, 'UP', 'iTraxx Crossover HY Spread +80bps in UKRAINE'),
+(4, 15, 50.00, 'UP', 'Gold Spot Price +50% in UKRAINE'),
+(4, 16, 100.00, 'UP', 'Crude Oil WTI Spot +50% in UKRAINE'),
+(4, 17, 30.00, 'UP', 'Copper Spot Price +30% in UKRAINE'),
+(4, 18, 100.00, 'UP', 'Natural Gas Spot +100% in UKRAINE'),
+(4, 13, 40.00, 'UP', 'VIX spike +40 in UKRAINE'),
+(4, 14, 40.00, 'UP', 'VSTOXX spike +40 in UKRAINE'),
+-- RATESHOCK Scenario (scenario_id 5)
+(5, 1, 8.00, 'DOWN', 'FTSE 100 Index shock in RATESHOCK'),
+(5, 2, 8.00, 'DOWN', 'S&P 500 Index shock in RATESHOCK'),
+(5, 3, 8.00, 'DOWN', 'STOXX 600 Index shock in RATESHOCK'),
+(5, 4, 8.00, 'DOWN', 'MSCI Asia-Pacific shock in RATESHOCK'),
+(5, 5, 8.00, 'DOWN', 'MSCI Emerging Markets shock in RATESHOCK'),
+(5, 6, 200.00, 'UP', 'UK Gilt 10Y Yield +200bps in RATESHOCK'),
+(5, 7, 200.00, 'UP', 'US Treasury 10Y Yield +200bps in RATESHOCK'),
+(5, 8, 200.00, 'UP', 'German Bund 10Y Yield +200bps in RATESHOCK'),
+(5, 9, 50.00, 'UP', 'iTraxx Europe CDS +50bps in RATESHOCK'),
+(5, 10, 50.00, 'UP', 'iTraxx Crossover HY Spread +50bps in RATESHOCK'),
+(5, 13, 15.00, 'UP', 'VIX rise in RATESHOCK'),
+(5, 14, 15.00, 'UP', 'VSTOXX rise in RATESHOCK');
