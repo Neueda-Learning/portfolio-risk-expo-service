@@ -40,7 +40,7 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "CREATE USER $DATABASE_USER WITH PASSWORD '$DATABASE_PASSWORD';" 2>/dev/null || \
+  -c "CREATE USER $DATABASE_USER WITH PASSWORD '$DATABASE_PASSWORD';" || \
   echo "  -> User may already exist (OK)"
 
 # Create database
@@ -50,7 +50,7 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "CREATE DATABASE $DATABASE_NAME OWNER $DATABASE_USER;" 2>/dev/null || \
+  -c "CREATE DATABASE $DATABASE_NAME OWNER $DATABASE_USER;" || \
   echo "  -> Database may already exist (OK)"
 
 # Grant privileges
