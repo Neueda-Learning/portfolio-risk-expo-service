@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -14,11 +15,14 @@ import java.math.BigDecimal;
 public class LimitDetailDTO {
     private Integer limitId;
     private String limitType;
+    private String limitMetric;
     private BigDecimal limitValue;
-    private BigDecimal currentUtilisation;
+    private BigDecimal warningThreshold;
+    private BigDecimal currentValue;
     private BigDecimal utilisationPct;
-    private BigDecimal warningPct;
+    private String status;
+    private LocalDate effectiveFrom;
+    private LocalDate effectiveTo;
     private Boolean isBreached;
-    private String currency;
 }
 
