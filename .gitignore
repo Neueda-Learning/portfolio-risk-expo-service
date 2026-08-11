@@ -53,6 +53,7 @@ out/
 *.iml
 *.ipr
 *.iws
+
 ### STS ###
 .apt_generated
 .classpath
@@ -73,3 +74,6 @@ build/
 !**/src/test/**/build
 
 HELP.md
+
+# Environmental variables
+.env

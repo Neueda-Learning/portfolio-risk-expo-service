@@ -1,0 +1,28 @@
+-- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
+-- Portfolio Data
+-- Generated: 2026-03-26 19:51:57
+--
+-- Consistent with DDL schema and FK requirements.
+-- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
+
+INSERT INTO portfolio (portfolio_id, portfolio_code, portfolio_name, portfolio_type, base_currency, aum, benchmark, risk_mandate, manager, is_active) VALUES
+(1, 'EQ-UK', 'UK Equity Fund', 'EQUITY', 'GBP', 1500000000.00, 'FTSE 100', 'TR: ±200bps, Max Sector: 15%', 'John Smith', TRUE),
+(2, 'EQ-US', 'US Equity Fund', 'EQUITY', 'USD', 2000000000.00, 'S&P 500', 'TR: ±250bps, Max Sector: 15%', 'Sarah Johnson', TRUE),
+(3, 'FI-GC', 'Global Credit Fund', 'FIXED_INCOME', 'GBP', 3500000000.00, 'Bloomberg Aggregate', 'Duration: 4-6y, Spread: ±100bps', 'Michael Chen', TRUE),
+(4, 'MA-BAL', 'Balanced Multi-Asset', 'MULTI_ASSET', 'GBP', 2500000000.00, '60/40 Index', 'VAR 1D 95%: £5-8M, Max Leverage: 2x', 'Emma Wilson', TRUE),
+(5, 'HF-ALT', 'Alternative Strategies', 'HEDGE', 'USD', 800000000.00, 'HFRI Fund of Funds Index', 'Max DD: 10%, VAR 1D 95%: 1% AUM', 'Robert Taylor', TRUE),
+(6, 'MM-EUR', 'Euro Money Market', 'MONEY_MKT', 'EUR', 1200000000.00, 'EONIA', 'Weighted Avg Maturity: 30-90d', 'Lisa Anderson', TRUE),
+(7, 'EQ-AP', 'Asia-Pacific Equity', 'EQUITY', 'USD', 1800000000.00, 'MSCI AP ex-JP', 'TR: ±300bps, Max Sector: 12%', 'David Park', TRUE),
+(8, 'FI-GOVT', 'Government Bonds', 'FIXED_INCOME', 'GBP', 2200000000.00, 'iBoxx Sovereigns', 'Duration: 5-8y, Gilt only', 'Patricia Brown', TRUE),
+(9, 'MA-FLEX', 'Flexible Income', 'MULTI_ASSET', 'GBP', 1100000000.00, 'Customized Blend', 'VAR 1D 95%: £2-3M, Leverage: ≤1.5x', 'Christopher Lee', TRUE),
+(10, 'HF-MACRO', 'Macro Hedge Fund', 'HEDGE', 'GBP', 650000000.00, 'CISDM Equal-Weight Index', 'Max DD: 12%, Volatility: ≤12%', 'Victoria Martinez', TRUE),
+(11, 'EQ-EMRG', 'Emerging Markets Equity', 'EQUITY', 'USD', 950000000.00, 'MSCI EM', 'TR: ±400bps, Max Sector: 10%', 'Andrew Zhang', TRUE),
+(12, 'FI-CORP', 'Corporate Bonds', 'FIXED_INCOME', 'GBP', 2800000000.00, 'iBoxx Corporate', 'Duration: 3-5y, Min Rating: BBB-', 'Michelle Harris', TRUE),
+(13, 'MA-GROWTH', 'Growth Portfolio', 'MULTI_ASSET', 'GBP', 1900000000.00, '70/30 Growth Index', 'VAR 1D 95%: £7-10M, Max Leverage: 2.5x', 'Kevin Thompson', TRUE),
+(14, 'HF-CTA', 'Commodity Trading Fund', 'HEDGE', 'USD', 520000000.00, 'Barclay CTA Index', 'Max DD: 15%, Corr to Equities: <0.3', 'Jennifer White', TRUE),
+(15, 'EQ-EUR', 'European Equity', 'EQUITY', 'EUR', 1650000000.00, 'STOXX 600', 'TR: ±250bps, Max Sector: 14%', 'Marco Rossi', TRUE),
+(16, 'FI-HY', 'High Yield Bonds', 'FIXED_INCOME', 'GBP', 1400000000.00, 'iBoxx High Yield', 'Duration: 3-4y, Min Rating: B-', 'Diana Garcia', TRUE),
+(17, 'MA-CONS', 'Conservative Income', 'MULTI_ASSET', 'GBP', 1300000000.00, '50/50 Conservative Index', 'VAR 1D 95%: £1.5-2.5M, Leverage: ≤1.2x', 'Steven O''Brien', TRUE),
+(18, 'HF-EVENTS', 'Event-Driven Fund', 'HEDGE', 'GBP', 680000000.00, 'HFRI Event-Driven Index', 'Max DD: 8%, Target Return: 8%+', 'Rachel King', TRUE),
+(19, 'EQ-JAPAN', 'Japan Equity Fund', 'EQUITY', 'JPY', 850000000.00, 'Nikkei 225', 'TR: ±280bps, Max Sector: 13%', 'Hiroshi Tanaka', TRUE),
+(20, 'FI-MIXED', 'Mixed Fixed Income', 'FIXED_INCOME', 'GBP', 2600000000.00, 'Bloomberg Multi-Asset', 'Duration: 4-7y, Blended Rating: A-', 'Susan Blake', TRUE);
