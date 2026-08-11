@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-# Load variables from .env
-ENV_FILE="${1:-.env}"
+# Load variables from .env in root directory
+ENV_FILE="${1:-$(dirname "$0")/../../.env}"
 
 if [[ ! -f "$ENV_FILE" ]]; then
   echo "Error: $ENV_FILE not found." >&2
