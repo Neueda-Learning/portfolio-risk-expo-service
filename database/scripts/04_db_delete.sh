@@ -45,7 +45,7 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$DATABASE_NAME' AND pid <> pg_backend_pid();" 2>/dev/null || true
+  -c "SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = '$DATABASE_NAME' AND pid <> pg_backend_pid();" || true
 
 # Drop database
 echo "Dropping database $DATABASE_NAME..."
@@ -54,7 +54,7 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "DROP DATABASE IF EXISTS $DATABASE_NAME;" 2>/dev/null || \
+  -c "DROP DATABASE IF EXISTS $DATABASE_NAME;" || \
   echo "  → Database may not exist"
 
 # Drop user
@@ -64,7 +64,7 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "DROP USER IF EXISTS $DATABASE_USER;" 2>/dev/null || \
+  -c "DROP USER IF EXISTS $DATABASE_USER;" || \
   echo "  → User may not exist"
 
 echo ""
