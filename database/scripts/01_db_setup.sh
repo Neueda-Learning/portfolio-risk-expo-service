@@ -20,8 +20,8 @@ fi
 
 DB_ADMIN_USER="${DATABASE_ADMIN_USER:-postgres}"
 
-echo "PostgreSQL Database Setup & Connect"
-echo "===================================="
+echo "PostgreSQL Database Setup"
+echo "========================="
 echo "Host: $DATABASE_HOST"
 echo "Port: $DATABASE_PORT"
 echo "Admin User: $DB_ADMIN_USER"
@@ -64,13 +64,3 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
 
 echo ""
 echo "Setup complete!"
-echo ""
-echo "Connecting to $DATABASE_NAME as $DATABASE_USER..."
-echo ""
-
-# Connect to the database
-PGPASSWORD="$DATABASE_PASSWORD" psql \
-  -h "$DATABASE_HOST" \
-  -p "$DATABASE_PORT" \
-  -U "$DATABASE_USER" \
-  -d "$DATABASE_NAME"
