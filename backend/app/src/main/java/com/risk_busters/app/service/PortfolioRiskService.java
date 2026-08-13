@@ -3,6 +3,7 @@ package com.risk_busters.app.service;
 import com.risk_busters.app.dto.ExposureResponseDTO;
 import com.risk_busters.app.dto.LimitDetailDTO;
 import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
+import com.risk_busters.app.dto.SectorExposureResponseDTO;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitStatus;
 import com.risk_busters.app.model.Position;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -50,6 +52,41 @@ public class PortfolioRiskService {
                 .totalExposure(totalExposure)
                 .currency(portfolio.getBaseCurrency())
                 .positionCount(positionCount)
+                .build();
+    }
+
+    /**
+     * Calculate total exposure grouped by instrument sector for a portfolio.
+     */
+    public SectorExposureResponseDTO calculateExposureBySector(Integer portfolioId) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new RuntimeException("Portfolio not found with id: " + portfolioId));
+
+        List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
+
+        Map<String, BigDecimal> sectorExposures = positions.stream()
+                .filter(position -> position.getMarketValueBase() != null)
+                .collect(Collectors.groupingBy(
+                        position -> {
+                            if (position.getInstrument() == null
+                                    || position.getInstrument().getSector() == null
+                                    || position.getInstrument().getSector().isBlank()) {
+                                return "UNASSIGNED";
+                            }
+                            return position.getInstrument().getSector();
+                        },
+                        Collectors.reducing(BigDecimal.ZERO, Position::getMarketValueBase, BigDecimal::add)
+                ));
+
+        BigDecimal totalExposure = sectorExposures.values().stream()
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Integer positionCount = positionRepository.countByPortfolioId(portfolioId);
+
+        return SectorExposureResponseDTO.builder()
+                .portfolioId(portfolioId)
+                .portfolioName(portfolio.getPortfolioName())
+                .sectorExposures(sectorExposures)
                 .build();
     }
     
@@ -115,5 +152,6 @@ public class PortfolioRiskService {
                 .isBreached(isBreached)
                 .build();
     }
+
 }
 
