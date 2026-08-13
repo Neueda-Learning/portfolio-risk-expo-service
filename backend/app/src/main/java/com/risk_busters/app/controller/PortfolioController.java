@@ -1,16 +1,10 @@
 package com.risk_busters.app.controller;
 
-import com.risk_busters.app.dto.AssetExposureResponseDTO;
-import com.risk_busters.app.dto.ExposureResponseDTO;
-import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
-import com.risk_busters.app.dto.SectorExposureResponseDTO;
+import com.risk_busters.app.dto.*;
 import com.risk_busters.app.service.PortfolioRiskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/portfolios")
@@ -56,6 +50,15 @@ public class PortfolioController {
     public ResponseEntity<AssetExposureResponseDTO> getPortfolioExposureByAsset(@PathVariable Integer id) {
         AssetExposureResponseDTO assetExposure = portfolioRiskService.calculateExposureByAsset(id);
         return ResponseEntity.ok(assetExposure);
+    }
+    /**
+     * GET /api/portfolios/{id}/var?confidence=95
+     * Calculating 1-day VaR with set confidence score
+     */
+    @GetMapping("/{id}/var")
+    public ResponseEntity<VarResponseDTO> getPortfolioVarConfidence(@PathVariable Integer id, @RequestParam(name = "confidence", defaultValue = "95") Integer confidence) {
+        VarResponseDTO varResponse = portfolioRiskService.calculate1DayVar(id, confidence);
+        return ResponseEntity.ok(varResponse);
     }
 }
 

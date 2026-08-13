@@ -4,15 +4,21 @@ import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitStatus;
+import com.risk_busters.app.model.PriceHistory;
 import com.risk_busters.app.model.Position;
 import com.risk_busters.app.model.Portfolio;
 import com.risk_busters.app.repository.LimitRepository;
+import com.risk_busters.app.repository.PriceHistoryRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
 import com.risk_busters.app.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
@@ -24,10 +30,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PortfolioRiskService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PortfolioRiskService.class);
     
     private final PortfolioRepository portfolioRepository;
     private final PositionRepository positionRepository;
     private final LimitRepository limitRepository;
+    private final PriceHistoryRepository priceHistoryRepository;
     
     /**
      * Calculate total exposure for a portfolio by summing position values
@@ -170,6 +179,127 @@ public class PortfolioRiskService {
                 .portfolioName(portfolio.getPortfolioName())
                 .assetExposures(assetsExposuresMap)
                 .build();
+    }
+
+    public VarResponseDTO calculate1DayVar(Integer portfolioId, Integer confidence) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
+
+        int confidenceLevel = confidence == null ? 95 : confidence;
+        if (confidenceLevel != 95 && confidenceLevel != 99) {
+            throw new IllegalArgumentException("Confidence must be either 95 or 99.");
+        }
+
+        List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
+
+        BigDecimal totalVar = BigDecimal.ZERO;
+        int contributingPositions = 0;
+
+        for (Position position : positions) {
+            if (position.getInstrument() == null
+                    || position.getInstrument().getInstrumentId() == null
+                    || position.getMarketValueBase() == null
+                    || position.getMarketValueBase().compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            List<PriceHistory> priceHistoryDesc = priceHistoryRepository
+                    .findByInstrumentInstrumentIdOrderByPriceDateDesc(position.getInstrument().getInstrumentId());
+
+            if (priceHistoryDesc.size() < 252) {
+                logger.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient price history\" availableDays={} requiredDays=252",
+                        portfolioId,
+                        position.getInstrument().getInstrumentId(),
+                        priceHistoryDesc.size());
+                throw new IllegalArgumentException("Not enough price history to calculate VaR. Instrument "
+                        + position.getInstrument().getInstrumentId()
+                        + " has only " + priceHistoryDesc.size() + " days; 252 required.");
+            }
+
+            List<Double> historicalPrices = priceHistoryDesc.stream()
+                    .limit(252)
+                    .map(PriceHistory::getClosePrice)
+                    .filter(Objects::nonNull)
+                    .map(BigDecimal::doubleValue)
+                    .collect(Collectors.toList());
+
+            // The VaR helper expects chronological order (oldest to newest).
+            Collections.reverse(historicalPrices);
+
+            if (historicalPrices.size() < 252) {
+                logger.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient valid close prices\" availablePrices={} requiredPrices=252",
+                        portfolioId,
+                        position.getInstrument().getInstrumentId(),
+                        historicalPrices.size());
+                throw new IllegalArgumentException("Not enough valid close prices to calculate VaR. Instrument "
+                        + position.getInstrument().getInstrumentId()
+                        + " has only " + historicalPrices.size() + " valid prices; 252 required.");
+            }
+
+            double positionVar = calculate1DayHistoricalVaR(
+                    historicalPrices,
+                    position.getMarketValueBase().doubleValue(),
+                    confidenceLevel,
+                    String.valueOf(portfolioId)
+            );
+
+            totalVar = totalVar.add(BigDecimal.valueOf(positionVar));
+            contributingPositions++;
+        }
+
+        if (contributingPositions == 0) {
+            throw new IllegalArgumentException("No valid positions available to calculate VaR.");
+        }
+
+        return VarResponseDTO.builder()
+                .portfolioId(portfolioId)
+                .portfolioName(portfolio.getPortfolioName())
+                .var1Day(totalVar.setScale(2, RoundingMode.HALF_UP))
+                .build();
+
+    }
+
+    private double calculate1DayHistoricalVaR(List<Double> historicalPrices,
+                                               double currentExposure,
+                                               int confidenceLevel,
+                                               String portfolioId) {
+
+        if (historicalPrices == null || historicalPrices.size() != 252) {
+            logger.error("VaR calculation failed: portfolio={} reason=\"Insufficient price history\"", portfolioId);
+            throw new IllegalArgumentException("Exactly 252 historical prices are required to calculate VaR.");
+        }
+
+        List<Double> dailyReturns = new ArrayList<>();
+        for (int i = 1; i < historicalPrices.size(); i++) {
+            double previousPrice = historicalPrices.get(i - 1);
+            double currentPrice = historicalPrices.get(i);
+
+            if (previousPrice == 0) {
+                continue;
+            }
+
+            double dailyReturn = (currentPrice - previousPrice) / previousPrice;
+            dailyReturns.add(dailyReturn);
+        }
+
+        if (dailyReturns.isEmpty()) {
+            return 0.0;
+        }
+
+        Collections.sort(dailyReturns);
+
+        double significanceLevel = 1.0 - (confidenceLevel / 100.0);
+        int index = (int) Math.max(0, Math.ceil(dailyReturns.size() * significanceLevel) - 1);
+
+        double percentileReturn = dailyReturns.get(index);
+        double varPercentage = percentileReturn < 0 ? Math.abs(percentileReturn) : 0.0;
+        double varValue = varPercentage * currentExposure;
+
+        logger.info("VaR calculated: portfolio={} var1Day_{}={} historyDays={}",
+                portfolioId, confidenceLevel, varValue, historicalPrices.size());
+
+        return varValue;
+
     }
 }
 
