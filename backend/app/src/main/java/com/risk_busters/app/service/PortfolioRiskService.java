@@ -1,9 +1,7 @@
 package com.risk_busters.app.service;
 
-import com.risk_busters.app.dto.ExposureResponseDTO;
-import com.risk_busters.app.dto.LimitDetailDTO;
-import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
-import com.risk_busters.app.dto.SectorExposureResponseDTO;
+import com.risk_busters.app.dto.*;
+import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitStatus;
 import com.risk_busters.app.model.Position;
@@ -36,7 +34,7 @@ public class PortfolioRiskService {
      */
     public ExposureResponseDTO calculateExposure(Integer portfolioId) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found with id: " + portfolioId));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
         
         List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
         BigDecimal totalExposure = positions.stream()
@@ -60,7 +58,7 @@ public class PortfolioRiskService {
      */
     public SectorExposureResponseDTO calculateExposureBySector(Integer portfolioId) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found with id: " + portfolioId));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
 
         List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
 
@@ -78,11 +76,6 @@ public class PortfolioRiskService {
                         Collectors.reducing(BigDecimal.ZERO, Position::getMarketValueBase, BigDecimal::add)
                 ));
 
-        BigDecimal totalExposure = sectorExposures.values().stream()
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        Integer positionCount = positionRepository.countByPortfolioId(portfolioId);
-
         return SectorExposureResponseDTO.builder()
                 .portfolioId(portfolioId)
                 .portfolioName(portfolio.getPortfolioName())
@@ -95,7 +88,7 @@ public class PortfolioRiskService {
      */
     public PortfolioLimitsResponseDTO getPortfolioLimits(Integer portfolioId) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> new RuntimeException("Portfolio not found with id: " + portfolioId));
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
         
         // Calculate current exposure
         ExposureResponseDTO exposure = calculateExposure(portfolioId);
@@ -153,5 +146,30 @@ public class PortfolioRiskService {
                 .build();
     }
 
+    public AssetExposureResponseDTO calculateExposureByAsset(Integer portfolioId) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
+
+        List<Position> positions = positionRepository.findByPortfolioPortfolioId(portfolioId);
+
+        Map<String, BigDecimal> assetsExposuresMap = positions.stream()
+                .filter(position -> position.getMarketValueBase() != null)
+                .collect(Collectors.groupingBy(
+                        position -> {
+                            if (position.getInstrument() == null
+                                    || position.getInstrument().getAssetClass() == null) {
+                                return "NOT CLASSIFIED";
+                            }
+                            return position.getInstrument().getAssetClass().getAssetClassName();
+                        },
+                        Collectors.reducing(BigDecimal.ZERO, Position::getMarketValueBase, BigDecimal::add)
+                ));
+
+        return AssetExposureResponseDTO.builder()
+                .portfolioId(portfolioId)
+                .portfolioName(portfolio.getPortfolioName())
+                .assetExposures(assetsExposuresMap)
+                .build();
+    }
 }
 

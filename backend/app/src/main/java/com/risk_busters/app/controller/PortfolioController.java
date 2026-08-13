@@ -1,5 +1,6 @@
 package com.risk_busters.app.controller;
 
+import com.risk_busters.app.dto.AssetExposureResponseDTO;
 import com.risk_busters.app.dto.ExposureResponseDTO;
 import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
 import com.risk_busters.app.dto.SectorExposureResponseDTO;
@@ -46,6 +47,15 @@ public class PortfolioController {
     public ResponseEntity<SectorExposureResponseDTO> getPortfolioExposureBySector(@PathVariable Integer id) {
         SectorExposureResponseDTO sectorExposure = portfolioRiskService.calculateExposureBySector(id);
         return ResponseEntity.ok(sectorExposure);
+    }
+    /**
+     * GET /api/portfolios/{id}/exposure/by-asset
+     * Return current exposure for a portfolio by asset
+     */
+    @GetMapping("/{id}/exposure/by-asset")
+    public ResponseEntity<AssetExposureResponseDTO> getPortfolioExposureByAsset(@PathVariable Integer id) {
+        AssetExposureResponseDTO assetExposure = portfolioRiskService.calculateExposureByAsset(id);
+        return ResponseEntity.ok(assetExposure);
     }
 }
 
