@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public interface LimitRepository extends JpaRepository<Limit, Integer> {
+    List<Limit> findByStatus(LimitStatus status);
+
     List<Limit> findByPortfolioPortfolioId(Integer portfolioId);
 
     List<Limit> findByPortfolioPortfolioIdAndStatus(Integer portfolioId, LimitStatus status);
