@@ -1,7 +1,6 @@
 package com.risk_busters.app.dto;
 
-import com.risk_busters.app.model.Limit;
-import com.risk_busters.app.model.LimitStatus;
+import com.risk_busters.app.model.LimitBreachStatus;
 import lombok.*;
 
 import java.util.List;
@@ -11,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class LimitBreachResponseDTO {
-    private LimitStatus status;
+    private LimitBreachStatus status;
     private List<LimitDetailDTO> limits;
 }

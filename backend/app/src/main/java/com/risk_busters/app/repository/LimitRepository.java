@@ -17,5 +17,7 @@ public interface LimitRepository extends JpaRepository<Limit, Integer> {
     List<Limit> findByPortfolioPortfolioIdAndStatus(Integer portfolioId, LimitStatus status);
 
     List<Limit> findByPortfolioPortfolioIdAndStatusIn(Integer portfolioId, List<LimitStatus> statuses);
+
+
 }
 
