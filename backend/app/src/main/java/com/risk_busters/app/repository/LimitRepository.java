@@ -1,5 +1,6 @@
 package com.risk_busters.app.repository;
 
+import com.risk_busters.app.dto.LimitDetailDTO;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

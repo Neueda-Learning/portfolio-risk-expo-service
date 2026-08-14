@@ -2,8 +2,8 @@ package com.risk_busters.app.service;
 
 import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
+import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.model.Limit;
-import com.risk_busters.app.model.LimitStatus;
 import com.risk_busters.app.model.PriceHistory;
 import com.risk_busters.app.model.Position;
 import com.risk_busters.app.model.Portfolio;
@@ -37,6 +37,7 @@ public class PortfolioRiskService {
     private final PositionRepository positionRepository;
     private final LimitRepository limitRepository;
     private final PriceHistoryRepository priceHistoryRepository;
+    private final LimitMapper limitMapper;
     
     /**
      * Calculate total exposure for a portfolio by summing position values
@@ -107,8 +108,8 @@ public class PortfolioRiskService {
         List<Limit> limits = limitRepository.findByPortfolioPortfolioId(portfolioId);
         
         List<LimitDetailDTO> limitDetails = limits.stream()
-                .map(limit -> buildLimitDetail(limit, totalExposure))
-                .collect(Collectors.toList());
+                .map(limit -> limitMapper.toDto(limit, totalExposure))
+                .toList();
         
         return PortfolioLimitsResponseDTO.builder()
                 .portfolioId(portfolioId)
@@ -119,41 +120,6 @@ public class PortfolioRiskService {
                 .build();
     }
     
-    /**
-     * Build limit detail with current utilisation
-     */
-    private LimitDetailDTO buildLimitDetail(Limit limit, BigDecimal totalExposure) {
-        BigDecimal currentValue = limit.getCurrentValue() != null ? limit.getCurrentValue() : totalExposure;
-        BigDecimal utilisationPct = limit.getUtilisationPct();
-
-        if (utilisationPct == null
-                && currentValue != null
-                && limit.getLimitValue() != null
-                && limit.getLimitValue().compareTo(BigDecimal.ZERO) > 0) {
-            utilisationPct = currentValue
-                    .divide(limit.getLimitValue(), 4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"));
-        }
-
-        boolean isBreached = LimitStatus.BREACH.equals(limit.getStatus())
-                || (currentValue != null
-                && limit.getLimitValue() != null
-                && currentValue.compareTo(limit.getLimitValue()) > 0);
-        
-        return LimitDetailDTO.builder()
-                .limitId(limit.getLimitId())
-                .limitType(limit.getLimitType() != null ? limit.getLimitType().name() : null)
-                .limitMetric(limit.getLimitMetric())
-                .limitValue(limit.getLimitValue())
-                .warningThreshold(limit.getWarningThreshold())
-                .currentValue(currentValue)
-                .utilisationPct(utilisationPct)
-                .status(limit.getStatus() != null ? limit.getStatus().name() : null)
-                .effectiveFrom(limit.getEffectiveFrom())
-                .effectiveTo(limit.getEffectiveTo())
-                .isBreached(isBreached)
-                .build();
-    }
 
     public AssetExposureResponseDTO calculateExposureByAsset(Integer portfolioId) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)

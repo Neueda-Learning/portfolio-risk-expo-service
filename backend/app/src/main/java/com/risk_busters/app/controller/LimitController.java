@@ -19,8 +19,8 @@ public class LimitController {
     private final LimitService limitService;
 
     @GetMapping("/breaches")
-    public ResponseEntity<List<LimitBreachResponseDTO>> getLimitBreaches(@RequestParam(name="status", defaultValue = "OK") LimitStatus status) {
-        List<LimitBreachResponseDTO> breaches = limitService.getLimitBreachesByStatus(status);
+    public ResponseEntity<LimitBreachResponseDTO> getLimitBreaches(@RequestParam(name="status", defaultValue = "OK") LimitStatus status) {
+        LimitBreachResponseDTO breaches = limitService.getLimitBreachesByStatus(status);
         return ResponseEntity.ok(breaches);
     }
 }
