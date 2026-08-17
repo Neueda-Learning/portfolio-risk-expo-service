@@ -39,14 +39,10 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class PortfolioRiskService {
 
-    private static final Logger logger = LoggerFactory.getLogger(PortfolioRiskService.class);
-
     private final PortfolioRepository portfolioRepository;
     private final PositionRepository positionRepository;
     private final LimitRepository limitRepository;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final LimitMapper limitMapper;
-
     /**
      * Calculate total exposure for a portfolio by summing position values
      */
@@ -256,7 +252,7 @@ public class PortfolioRiskService {
                     .findByInstrumentInstrumentIdOrderByPriceDateDesc(position.getInstrument().getInstrumentId());
 
             if (priceHistoryDesc.size() < 252) {
-                logger.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient price history\" availableDays={} requiredDays=252",
+                log.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient price history\" availableDays={} requiredDays=252",
                         portfolioId,
                         position.getInstrument().getInstrumentId(),
                         priceHistoryDesc.size());
@@ -277,7 +273,7 @@ public class PortfolioRiskService {
             Collections.reverse(historicalPrices);
 
             if (historicalPrices.size() < 252) {
-                logger.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient valid close prices\" availablePrices={} requiredPrices=252",
+                log.error("VaR calculation failed: portfolio={} instrument={} reason=\"Insufficient valid close prices\" availablePrices={} requiredPrices=252",
                         portfolioId,
                         position.getInstrument().getInstrumentId(),
                         historicalPrices.size());
@@ -352,7 +348,7 @@ public class PortfolioRiskService {
                                                String portfolioId) {
 
         if (historicalPrices == null || historicalPrices.size() != 252) {
-            logger.error("VaR calculation failed: portfolio={} reason=\"Insufficient price history\"", portfolioId);
+            log.error("VaR calculation failed: portfolio={} reason=\"Insufficient price history\"", portfolioId);
             throw new IllegalArgumentException("Exactly 252 historical prices are required to calculate VaR.");
         }
 
@@ -382,16 +378,19 @@ public class PortfolioRiskService {
         double varPercentage = percentileReturn < 0 ? Math.abs(percentileReturn) : 0.0;
         double varValue = varPercentage * currentExposure;
 
-        logger.info("VaR calculated: portfolio={} var1Day_{}={} historyDays={}",
+        log.info("VaR calculated: portfolio={} var1Day_{}={} historyDays={}",
                 portfolioId, confidenceLevel, varValue, historicalPrices.size());
 
         return varValue;
 
     }
-
-
-}
-
+    private Portfolio loadPortfolio(Integer portfolioId) {
+        return portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> {
+                    log.error("Portfolio lookup failed: portfolioId={} reason=Portfolio not found", portfolioId);
+                    return new PortfolioNotFoundException(portfolioId);
+                });
+    }
     private boolean isWarningApproaching(LimitDetailDTO detail) {
         if (Boolean.TRUE.equals(detail.getIsBreached())) {
             return false;
@@ -404,12 +403,5 @@ public class PortfolioRiskService {
         return detail.getUtilisationPct() != null
                 && detail.getUtilisationPct().compareTo(new BigDecimal("90")) >= 0;
     }
-
-    private Portfolio loadPortfolio(Integer portfolioId) {
-        return portfolioRepository.findById(portfolioId)
-                .orElseThrow(() -> {
-                    log.error("Portfolio lookup failed: portfolioId={} reason=Portfolio not found", portfolioId);
-                    return new PortfolioNotFoundException(portfolioId);
-                });
-    }
 }
+
