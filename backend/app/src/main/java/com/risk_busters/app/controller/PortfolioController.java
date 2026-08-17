@@ -1,6 +1,7 @@
 package com.risk_busters.app.controller;
 
 import com.risk_busters.app.dto.*;
+import com.risk_busters.app.service.PortfolioSnapshotService;
 import com.risk_busters.app.service.PortfolioRiskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 public class PortfolioController {
 
     private final PortfolioRiskService portfolioRiskService;
+    private final PortfolioSnapshotService portfolioSnapshotService;
 
     /**
      * GET /api/portfolios/{id}/exposure
@@ -67,6 +69,11 @@ public class PortfolioController {
         LocalDate snapshotDate = request != null ? request.getSnapshotDate() : LocalDate.now();
         portfolioRiskService.storeSnapshot(id, snapshotDate);
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/{id}/snapshots")
+    public ResponseEntity<GetSnapshotResponseDTO> getPortfolioSnapshots(@PathVariable Integer id, @RequestParam(required = true) LocalDate startDate, @RequestParam(required = false) LocalDate endDate) {
+        GetSnapshotResponseDTO snapshots = portfolioSnapshotService.getPortfolioSnapshots(id, startDate, endDate);
+        return ResponseEntity.ok(snapshots);
     }
 }
 
