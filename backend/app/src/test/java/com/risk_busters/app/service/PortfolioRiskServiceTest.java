@@ -8,8 +8,6 @@ import com.risk_busters.app.model.Portfolio;
 import com.risk_busters.app.model.PortfolioType;
 import com.risk_busters.app.model.Position;
 import com.risk_busters.app.model.PriceHistory;
-import com.risk_busters.app.repository.LimitRepository;
-import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.repository.PortfolioRepository;
 import com.risk_busters.app.repository.PositionRepository;
 import com.risk_busters.app.repository.PriceHistoryRepository;
@@ -42,18 +40,13 @@ class PortfolioRiskServiceTest {
     @Mock
     private PositionRepository positionRepository;
     @Mock
-    private LimitRepository limitRepository;
-    @Mock
     private PriceHistoryRepository priceHistoryRepository;
-    @Mock
-    private LimitMapper limitMapper;
-
     @InjectMocks
     private PortfolioRiskService service;
 
     @Test
     void calculateExposure_aggregatesMultiplePositionsAcrossBaseAndNonBaseCurrencies() {
-        Portfolio portfolio = portfolio("USD");
+        Portfolio portfolio = portfolio("GBP");
         Position first = position(1, portfolio, instrument(1, "USD", "Technology"), new BigDecimal("100.00"));
         Position second = position(2, portfolio, instrument(2, "GBP", "Technology"), new BigDecimal("125.00"));
         Position third = position(3, portfolio, instrument(3, "EUR", "Healthcare"), new BigDecimal("240.00"));
@@ -65,18 +58,35 @@ class PortfolioRiskServiceTest {
         ExposureResponseDTO response = service.calculateExposure(1);
 
         Assertions.assertEquals(0, response.getTotalExposure().compareTo(new BigDecimal("465.00")));
-        Assertions.assertEquals("USD", response.getCurrency());
+        Assertions.assertEquals("GBP", response.getCurrency());
         Assertions.assertEquals(3, response.getPositionCount());
+    }
+
+    @Test
+    void calculate1DayVar_usesExact252DaysOfPriceHistory() {
+        Portfolio portfolio = portfolio("EUR");
+        Position position = position(1, portfolio, instrument(1, "GBP", "Technology"), new BigDecimal("1000.00"));
+
+        when(portfolioRepository.findById(1)).thenReturn(Optional.of(portfolio));
+        when(positionRepository.findByPortfolioPortfolioId(1)).thenReturn(List.of(position));
+        when(priceHistoryRepository.findByInstrumentInstrumentIdOrderByPriceDateDesc(1))
+                .thenReturn(historicalPricesDescending(new BigDecimal("100.00")));
+
+        Assertions.assertEquals(
+                0,
+                service.calculate1DayVar(1, 95).getVar1Day().compareTo(new BigDecimal("10.00"))
+        );
     }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("varEdgeCases")
     void calculate1DayVar_handlesKnownSeriesAndEdgeCases(String scenario,
+                                                         String baseCurrency,
                                                          List<Position> positions,
                                                          List<PriceHistory> pricesDescending,
                                                          Class<? extends Throwable> expectedException,
                                                          BigDecimal expectedVar) {
-        Portfolio portfolio = portfolio("USD");
+        Portfolio portfolio = portfolio(baseCurrency);
 
         when(portfolioRepository.findById(1)).thenReturn(Optional.of(portfolio));
         when(positionRepository.findByPortfolioPortfolioId(1)).thenReturn(positions);
@@ -93,12 +103,13 @@ class PortfolioRiskServiceTest {
     }
 
     private static Stream<Arguments> varEdgeCases() {
-        Portfolio portfolio = portfolio("USD");
+        Portfolio portfolio = portfolio("JPY");
         Position nonBaseCurrencyPosition = position(1, portfolio, instrument(1, "GBP", "Technology"), new BigDecimal("1000.00"));
 
         return Stream.of(
                 Arguments.of(
                         "empty portfolio",
+                        "USD",
                         List.<Position>of(),
                         List.<PriceHistory>of(),
                         IllegalArgumentException.class,
@@ -106,6 +117,7 @@ class PortfolioRiskServiceTest {
                 ),
                 Arguments.of(
                         "portfolio with no price data",
+                        "GBP",
                         List.of(nonBaseCurrencyPosition),
                         List.<PriceHistory>of(),
                         InsufficientPriceHistoryException.class,
@@ -113,6 +125,7 @@ class PortfolioRiskServiceTest {
                 ),
                 Arguments.of(
                         "position in currency not matching base currency",
+                        "EUR",
                         List.of(nonBaseCurrencyPosition),
                         historicalPricesDescending(new BigDecimal("100.00")),
                         null,
