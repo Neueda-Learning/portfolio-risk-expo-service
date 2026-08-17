@@ -15,6 +15,7 @@ import com.risk_busters.app.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -275,6 +276,7 @@ public class PortfolioRiskService {
     }
 
     @Transactional
+    @Modifying
     public void storeSnapshot(Integer portfolioId, LocalDate snapshotDate) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
