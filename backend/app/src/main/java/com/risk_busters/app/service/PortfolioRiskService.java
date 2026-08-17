@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.math.BigDecimal;
@@ -270,6 +271,21 @@ public class PortfolioRiskService {
                 portfolioId, confidenceLevel, varValue, historicalPrices.size());
 
         return varValue;
+
+    }
+
+    @Transactional
+    public void storeSnapshot(Integer portfolioId, LocalDate snapshotDate) {
+        Portfolio portfolio = portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
+
+        try {
+            portfolioRepository.storeSnapshot(portfolioId, snapshotDate);
+            logger.info("Snapshot stored: portfolio={} snapshotDate={}", portfolioId, snapshotDate);
+        } catch (Exception e) {
+            logger.warn("Snapshot creation failed: portfolio={} snapshotDate={} reason={}", portfolioId, snapshotDate, e.getMessage());
+            throw new RuntimeException(e); //TODO proper exception
+        }
 
     }
 }

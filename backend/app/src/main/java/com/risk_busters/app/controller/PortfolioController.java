@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/portfolios")
 @RequiredArgsConstructor
@@ -59,6 +61,12 @@ public class PortfolioController {
     public ResponseEntity<VarResponseDTO> getPortfolioVarConfidence(@PathVariable Integer id, @RequestParam(name = "confidence", defaultValue = "95") Integer confidence) {
         VarResponseDTO varResponse = portfolioRiskService.calculate1DayVar(id, confidence);
         return ResponseEntity.ok(varResponse);
+    }
+    @PostMapping("/{id}/snapshots")
+    public ResponseEntity<Void> storeSnapshot(@PathVariable Integer id, @RequestBody(required = false) StoreSnapshotRequestDTO request) {
+        LocalDate snapshotDate = request != null ? request.getSnapshotDate() : LocalDate.now();
+        portfolioRiskService.storeSnapshot(id, snapshotDate);
+        return ResponseEntity.ok().build();
     }
 }
 
