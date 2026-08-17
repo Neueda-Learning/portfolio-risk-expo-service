@@ -67,7 +67,7 @@ public class PortfolioController {
     @PostMapping("/{id}/snapshots")
     public ResponseEntity<Void> storeSnapshot(@PathVariable Integer id, @RequestBody(required = false) StoreSnapshotRequestDTO request) {
         LocalDate snapshotDate = request != null ? request.getSnapshotDate() : LocalDate.now();
-        portfolioRiskService.storeSnapshot(id, snapshotDate);
+        portfolioSnapshotService.storeSnapshot(id, snapshotDate);
         return ResponseEntity.ok().build();
     }
     @GetMapping("/{id}/snapshots")
