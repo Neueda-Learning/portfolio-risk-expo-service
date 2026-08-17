@@ -4,6 +4,7 @@ import com.risk_busters.app.dto.ExposureResponseDTO;
 import com.risk_busters.app.dto.PortfolioLimitsResponseDTO;
 import com.risk_busters.app.service.PortfolioRiskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/portfolios")
 @RequiredArgsConstructor
+@Slf4j
 public class PortfolioController {
     
     private final PortfolioRiskService portfolioRiskService;
@@ -23,6 +25,7 @@ public class PortfolioController {
      */
     @GetMapping("/{id}/exposure")
     public ResponseEntity<ExposureResponseDTO> getPortfolioExposure(@PathVariable Integer id) {
+        log.info("Exposure request received: portfolioId={} endpoint=/api/portfolios/{id}/exposure", id);
         ExposureResponseDTO exposure = portfolioRiskService.calculateExposure(id);
         return ResponseEntity.ok(exposure);
     }
@@ -33,8 +36,8 @@ public class PortfolioController {
      */
     @GetMapping("/{id}/limits")
     public ResponseEntity<PortfolioLimitsResponseDTO> getPortfolioLimits(@PathVariable Integer id) {
+        log.info("Limits request received: portfolioId={} endpoint=/api/portfolios/{id}/limits", id);
         PortfolioLimitsResponseDTO limits = portfolioRiskService.getPortfolioLimits(id);
         return ResponseEntity.ok(limits);
     }
 }
-
