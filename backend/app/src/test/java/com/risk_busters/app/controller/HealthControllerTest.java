@@ -38,8 +38,8 @@ class HealthControllerTest {
         HandlerMethod limitHandlerMethod = mock(HandlerMethod.class);
 
         HealthController controller = new HealthController(dataSource, applicationContext, handlerMapping);
-        PortfolioController portfolioController = new PortfolioController(mock(PortfolioRiskService.class));
-        LimitController limitController = new LimitController(mock(LimitService.class));
+        PortfolioController portfolioController = mock(PortfolioController.class);
+        LimitController limitController = mock(LimitController.class);
 
         Map<String, Object> controllers = new LinkedHashMap<>();
         controllers.put("healthController", controller);
@@ -83,8 +83,8 @@ class HealthControllerTest {
         HandlerMethod healthHandlerMethod = mock(HandlerMethod.class);
 
         HealthController controller = new HealthController(dataSource, applicationContext, handlerMapping);
-        PortfolioController portfolioController = new PortfolioController(mock(PortfolioRiskService.class));
-        LimitController limitController = new LimitController(mock(LimitService.class));
+        PortfolioController portfolioController = mock(PortfolioController.class);
+        LimitController limitController = mock(LimitController.class);
 
         Map<String, Object> controllers = new LinkedHashMap<>();
         controllers.put("healthController", controller);
