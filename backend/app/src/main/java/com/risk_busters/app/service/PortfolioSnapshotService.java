@@ -8,10 +8,14 @@ import com.risk_busters.app.model.Portfolio;
 import com.risk_busters.app.repository.ExposureSnapshotRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +24,32 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class PortfolioSnapshotService {
 
+    private static final Logger logger = LoggerFactory.getLogger(PortfolioSnapshotService.class);
+
     private final PortfolioRepository portfolioRepository;
     private final ExposureSnapshotRepository exposureSnapshotRepository;
+
+    @Scheduled(cron = "0 0 17 * * *", zone = "Europe/London")
+    @SuppressWarnings("unused")
+    @Transactional
+    public void snapshotsEndOfDayProcedure() {
+        LocalDate snapshotDate = LocalDate.now(ZoneId.of("Europe/London"));
+        List<Portfolio> portfolios = portfolioRepository.findAll();
+
+        logger.info("Starting end-of-day snapshot creation for {} portfolios on {}", portfolios.size(), snapshotDate);
+
+        for (Portfolio portfolio : portfolios) {
+            try {
+                portfolioRepository.storeSnapshot(portfolio.getPortfolioId(), snapshotDate);
+                logger.info("Snapshot created for portfolio={} snapshotDate={}", portfolio.getPortfolioId(), snapshotDate);
+            } catch (Exception ex) {
+                logger.warn("Snapshot creation failed for portfolio={} snapshotDate={} reason={}",
+                        portfolio.getPortfolioId(), snapshotDate, ex.getMessage());
+            }
+        }
+
+        logger.info("Completed end-of-day snapshot creation for {} portfolios on {}", portfolios.size(), snapshotDate);
+    }
 
     public GetSnapshotResponseDTO getPortfolioSnapshots(Integer portfolioId, LocalDate startDate, LocalDate endDate) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
