@@ -1,6 +1,7 @@
 package com.risk_busters.app.service;
 
 import com.risk_busters.app.dto.*;
+import com.risk_busters.app.exceptions.InsufficientPriceHistoryException;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.model.Limit;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -147,6 +149,7 @@ public class PortfolioRiskService {
                 .build();
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public VarResponseDTO calculate1DayVar(Integer portfolioId, Integer confidence) {
         Portfolio portfolio = portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio not found with id: " + portfolioId));
@@ -177,9 +180,10 @@ public class PortfolioRiskService {
                         portfolioId,
                         position.getInstrument().getInstrumentId(),
                         priceHistoryDesc.size());
-                throw new IllegalArgumentException("Not enough price history to calculate VaR. Instrument "
-                        + position.getInstrument().getInstrumentId()
-                        + " has only " + priceHistoryDesc.size() + " days; 252 required.");
+                throw new InsufficientPriceHistoryException(
+                        position.getInstrument().getInstrumentId(),
+                        priceHistoryDesc.size(),
+                        252);
             }
 
             List<Double> historicalPrices = priceHistoryDesc.stream()
@@ -197,9 +201,10 @@ public class PortfolioRiskService {
                         portfolioId,
                         position.getInstrument().getInstrumentId(),
                         historicalPrices.size());
-                throw new IllegalArgumentException("Not enough valid close prices to calculate VaR. Instrument "
-                        + position.getInstrument().getInstrumentId()
-                        + " has only " + historicalPrices.size() + " valid prices; 252 required.");
+                throw new InsufficientPriceHistoryException(
+                        position.getInstrument().getInstrumentId(),
+                        historicalPrices.size(),
+                        252);
             }
 
             double positionVar = calculate1DayHistoricalVaR(
