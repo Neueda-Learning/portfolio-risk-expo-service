@@ -77,3 +77,6 @@ HELP.md
 
 # Environmental variables
 .env
+
+# Output files
+database/dumps/
