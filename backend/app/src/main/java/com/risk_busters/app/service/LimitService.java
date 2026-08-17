@@ -10,6 +10,7 @@ import com.risk_busters.app.model.LimitBreach;
 import com.risk_busters.app.model.LimitBreachStatus;
 import com.risk_busters.app.repository.LimitBreachRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,14 +19,23 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class LimitService {
     private final LimitBreachRepository limitBreachRepository;
 
     public LimitBreachResponseDTO getLimitBreachesByStatus(LimitBreachStatus status) {
+        log.info("Limit breaches lookup started: status={}", status);
+
         List<LimitDetailDTO> mappedLimits = limitBreachRepository.findByStatus(status).stream()
                 .map(this::toLimitDetailDto)//todo toLimitDetailDTO should go as its own mapper
                 .toList();
+
+        if (mappedLimits.isEmpty()) {
+            log.warn("No limit breaches found: status={}", status);
+        } else {
+            log.info("Limit breaches lookup completed: status={} count={}", status, mappedLimits.size());
+        }
 
         return LimitBreachResponseDTO.builder()
                 .status(status)
@@ -35,11 +45,15 @@ public class LimitService {
 
     @Transactional
     public AcknowledgeLimitResponseDTO acknowledgeLimitBreach(Integer limitId, AcknowledgeLimitRequestDTO request) {
+        log.info("Limit breach acknowledgement started: limitId={} acknowledgedBy={}", limitId, request.getAcknowledgedBy());
+
         // Find the most recent open breach for this limit
         LimitBreach breach = limitBreachRepository
                 .findFirstByLimitLimitIdOrderByBreachDateDesc(limitId)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "No limit breach found for limit ID: " + limitId));
+                .orElseThrow(() -> {
+                    log.error("Limit breach acknowledgement failed: limitId={} reason=No limit breach found", limitId);
+                    return new ResourceNotFoundException("No limit breach found for limit ID: " + limitId);
+                });
 
         // Update breach record
         //todo think about moving it to a function
@@ -51,6 +65,12 @@ public class LimitService {
 
 
         //todo  eventualy move to its own mapper
+        log.info("Limit breach acknowledged: limitId={} acknowledgedBy={} status={} resolution={}",
+                limitId,
+                saved.getAcknowledgedBy(),
+                saved.getStatus(),
+                saved.getResolution());
+
         return AcknowledgeLimitResponseDTO.builder()
                 .limitId(limitId)
                 .acknowledgedBy(saved.getAcknowledgedBy())

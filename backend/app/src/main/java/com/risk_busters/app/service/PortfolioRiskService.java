@@ -384,6 +384,7 @@ public class PortfolioRiskService {
         return varValue;
 
     }
+    //TODO move it to some place that all other services can use it, very common function call
     private Portfolio loadPortfolio(Integer portfolioId) {
         return portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> {
