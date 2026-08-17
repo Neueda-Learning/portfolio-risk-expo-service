@@ -63,6 +63,24 @@ class PortfolioRiskServiceTest {
     }
 
     @Test
+    void calculateExposure_handlesNonUsdBaseCurrencyWithMixedPositionCurrencies() {
+        Portfolio portfolio = portfolio("JPY");
+        Position first = position(1, portfolio, instrument(1, "USD", "Technology"), new BigDecimal("11000.00"));
+        Position second = position(2, portfolio, instrument(2, "GBP", "Technology"), new BigDecimal("6500.00"));
+        Position third = position(3, portfolio, instrument(3, "JPY", "Healthcare"), new BigDecimal("5000.00"));
+
+        when(portfolioRepository.findById(1)).thenReturn(Optional.of(portfolio));
+        when(positionRepository.findByPortfolioPortfolioId(1)).thenReturn(List.of(first, second, third));
+        when(positionRepository.countByPortfolioId(1)).thenReturn(3);
+
+        ExposureResponseDTO response = service.calculateExposure(1);
+
+        Assertions.assertEquals(0, response.getTotalExposure().compareTo(new BigDecimal("22500.00")));
+        Assertions.assertEquals("JPY", response.getCurrency());
+        Assertions.assertEquals(3, response.getPositionCount());
+    }
+
+    @Test
     void calculate1DayVar_usesExact252DaysOfPriceHistory() {
         Portfolio portfolio = portfolio("EUR");
         Position position = position(1, portfolio, instrument(1, "GBP", "Technology"), new BigDecimal("1000.00"));
