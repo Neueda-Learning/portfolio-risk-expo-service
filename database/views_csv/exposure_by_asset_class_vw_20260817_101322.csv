@@ -1,0 +1,13 @@
+portfolio_id,portfolio_code,portfolio_name,base_currency,asset_class_id,asset_class_name,num_positions,total_exposure,pct_of_portfolio,earliest_position_date,latest_position_date
+1,EQ-UK,UK Equity Fund,GBP,1,Equity,2,325455000.00,100.00,2026-03-20,2026-03-20
+2,EQ-US,US Equity Fund,USD,1,Equity,2,64065600.00,100.00,2026-03-20,2026-03-20
+3,FI-GC,Global Credit Fund,GBP,2,Fixed Income,2,684880000.00,100.00,2026-03-20,2026-03-20
+4,MA-BAL,Balanced Multi-Asset,GBP,1,Equity,2,27978125.00,100.00,2026-03-20,2026-03-20
+5,HF-ALT,Alternative Strategies,USD,3,Foreign Exchange,1,4340000.00,72.27,2026-03-20,2026-03-20
+5,HF-ALT,Alternative Strategies,USD,4,Derivatives,1,1665000.00,27.73,2026-03-20,2026-03-20
+6,MM-EUR,Euro Money Market,EUR,2,Fixed Income,2,1198725000.00,100.00,2026-03-20,2026-03-20
+7,EQ-AP,Asia-Pacific Equity,USD,1,Equity,2,5496800.00,100.00,2026-03-20,2026-03-20
+8,FI-GOVT,Government Bonds,GBP,2,Fixed Income,2,850425000.00,100.00,2026-03-20,2026-03-20
+9,MA-FLEX,Flexible Income,GBP,1,Equity,2,225664000.00,100.00,2026-03-20,2026-03-20
+10,HF-MACRO,Macro Hedge Fund,GBP,5,Commodities,1,10252500.00,80.21,2026-03-20,2026-03-20
+10,HF-MACRO,Macro Hedge Fund,GBP,3,Foreign Exchange,1,2530000.00,19.79,2026-03-20,2026-03-20

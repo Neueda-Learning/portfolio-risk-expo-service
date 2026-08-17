@@ -34,7 +34,7 @@ echo "User: $DATABASE_USER"
 echo ""
 
 # Load SQL files in order
-for i in {0..8}; do
+for i in {0..17}; do
   FILE=$(printf "%s/%02d_*.sql" "$DATA_DIR" "$i")
   
   # Check if file exists (handle glob expansion)

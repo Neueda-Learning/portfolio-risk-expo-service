@@ -35,23 +35,31 @@ echo ""
 
 # Create user
 echo "Creating user $DATABASE_USER..."
-PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
+USER_CREATED=false
+if PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -h "$DATABASE_HOST" \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "CREATE USER $DATABASE_USER WITH PASSWORD '$DATABASE_PASSWORD';" || \
-  echo "  -> User may already exist (OK)"
+  -c "CREATE USER $DATABASE_USER WITH PASSWORD '$DATABASE_PASSWORD';" | grep -q "CREATE ROLE"; then
+  USER_CREATED=true
+else
+  echo "  -> User may already exist or could not be created"
+fi
 
 # Create database
 echo "Creating database $DATABASE_NAME..."
-PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
+DB_CREATED=false
+if PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -h "$DATABASE_HOST" \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "CREATE DATABASE $DATABASE_NAME OWNER $DATABASE_USER;" || \
-  echo "  -> Database may already exist (OK)"
+  -c "CREATE DATABASE $DATABASE_NAME OWNER $DATABASE_USER;" | grep -q "CREATE DATABASE"; then
+  DB_CREATED=true
+else
+  echo "  -> Database may already exist or could not be created"
+fi
 
 # Grant privileges
 echo "Granting privileges on schema public..."
@@ -63,4 +71,12 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -c "GRANT ALL PRIVILEGES ON SCHEMA public TO $DATABASE_USER;"
 
 echo ""
-echo "Setup complete!"
+if $USER_CREATED && $DB_CREATED; then
+  echo "Setup complete!"
+elif $USER_CREATED; then
+  echo "Setup complete! (Database was not created)"
+elif $DB_CREATED; then
+  echo "Setup complete! (User was not created)"
+else
+  echo "Setup complete! (Note: User and/or database may have already existed)"
+fi

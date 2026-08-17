@@ -7,7 +7,7 @@
 
 -- ============================================================================
 -- VIEW 1: limit_breaches_vw
--- Purpose: Open breaches joined with limit and portfolio details, ordered by severity
+-- Purpose: Open breaches joined with limit and portfolio details, ordered by breach_pct desc
 -- ============================================================================
 CREATE VIEW limit_breaches_vw AS
 SELECT 
@@ -25,21 +25,16 @@ SELECT
     lb.excess_amount,
     ROUND((lb.excess_amount / lb.limit_value * 100), 2) as breach_pct,
     lb.severity,
-    CASE 
-        WHEN lb.severity = 'CRITICAL' THEN 1
-        WHEN lb.severity = 'MAJOR' THEN 2
-        WHEN lb.severity = 'MINOR' THEN 3
-        ELSE 4
-    END as severity_order,
     lb.status,
     lb.acknowledged_by,
     lb.acknowledged_at,
     lb.resolution,
-    DATEDIFF(day, lb.breach_date, CAST(GETDATE() AS DATE)) as days_open
+    (CURRENT_DATE - lb.breach_date) as days_open
 FROM limit_breach lb
 JOIN risk_limit rl ON lb.limit_id = rl.limit_id
 JOIN portfolio p ON lb.portfolio_id = p.portfolio_id
-ORDER BY severity_order ASC, breach_date DESC, breach_pct DESC;
+WHERE lb.status = 'OPEN'
+ORDER BY breach_pct DESC, breach_date DESC;
 
 -- ============================================================================
 -- VIEW 2: exposure_by_asset_class_vw
@@ -55,8 +50,7 @@ SELECT
     ac.asset_class_name,
     COUNT(DISTINCT pos.position_id) as num_positions,
     SUM(pos.market_value_base) as total_exposure,
-    SUM(pos.quantity * i.current_value) as market_value_current,
-    ROUND(100.0 * SUM(pos.market_value_base) / 
+    ROUND(100.0 * SUM(pos.market_value_base) /
         (SELECT SUM(market_value_base) FROM position WHERE portfolio_id = p.portfolio_id), 2) as pct_of_portfolio,
     MIN(pos.position_date) as earliest_position_date,
     MAX(pos.position_date) as latest_position_date
@@ -71,7 +65,7 @@ GROUP BY
     p.base_currency,
     ac.asset_class_id,
     ac.asset_class_name
-ORDER BY p.portfolio_id, ac.asset_class_id;
+ORDER BY p.portfolio_id, pct_of_portfolio DESC;
 
 -- ============================================================================
 -- VIEW 3: portfolio_risk_summary_vw
