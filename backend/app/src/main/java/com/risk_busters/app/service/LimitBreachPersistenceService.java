@@ -11,6 +11,7 @@ import com.risk_busters.app.repository.LimitBreachRepository;
 import com.risk_busters.app.repository.LimitRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -40,9 +41,9 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LimitBreachPersistenceService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LimitBreachPersistenceService.class);
 
     private final LimitBreachRepository limitBreachRepository;
     private final LimitRepository limitRepository;
@@ -76,7 +77,7 @@ public class LimitBreachPersistenceService {
 
             Limit limit = limitRepository.findById(result.getLimitId()).orElse(null);
             if (limit == null) {
-                logger.warn("LimitBreachPersistence: limitId={} not found, skipping", result.getLimitId());
+                log.warn("LimitBreachPersistence: limitId={} not found, skipping", result.getLimitId());
                 continue;
             }
 
@@ -92,7 +93,7 @@ public class LimitBreachPersistenceService {
                     .existsByLimitLimitIdAndBreachDate(result.getLimitId(), today);
 
             if (alreadyOpen) {
-                logger.debug("LimitBreachPersistence: breach already recorded today for limitId={}, skipping insert",
+                log.debug("LimitBreachPersistence: breach already recorded today for limitId={}, skipping insert",
                         result.getLimitId());
                 continue;
             }
@@ -112,7 +113,7 @@ public class LimitBreachPersistenceService {
             limitBreachRepository.save(breach);
             newBreaches++;
 
-            logger.info("LimitBreachPersistence: new breach recorded — breachId={} limitId={} type={} severity={}",
+            log.info("LimitBreachPersistence: new breach recorded — breachId={} limitId={} type={} severity={}",
                     breach.getBreachId(), result.getLimitId(), result.getLimitType(), result.getSeverity());
         }
 

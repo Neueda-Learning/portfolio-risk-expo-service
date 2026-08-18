@@ -2,6 +2,7 @@ package com.risk_busters.app.controller;
 
 import com.risk_busters.app.exceptions.InsufficientPriceHistoryException;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
+import com.risk_busters.app.exceptions.SnapshotPersistenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.UnexpectedRollbackException;
@@ -40,6 +41,17 @@ public class GlobalExceptionHandler {
                 "instrumentId", ex.getInstrumentId() != null ? ex.getInstrumentId() : "unknown",
                 "availableDays", ex.getAvailableDays(),
                 "requiredDays", ex.getRequiredDays(),
+                "timestamp", Instant.now().toString()
+        ));
+    }
+
+    @ExceptionHandler(SnapshotPersistenceException.class)
+    public ResponseEntity<Map<String, Object>> handleSnapshotPersistence(SnapshotPersistenceException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "error", "Snapshot Persistence Failed",
+                "message", ex.getMessage(),
+                "portfolioId", ex.getPortfolioId() != null ? String.valueOf(ex.getPortfolioId()) : "unknown",
+                "snapshotDate", ex.getSnapshotDate() != null ? ex.getSnapshotDate().toString() : "unknown",
                 "timestamp", Instant.now().toString()
         ));
     }

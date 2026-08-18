@@ -10,6 +10,7 @@ import com.risk_busters.app.repository.LimitRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
 import com.risk_busters.app.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -57,9 +58,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class LimitComparisonService {
 
-    private static final Logger logger = LoggerFactory.getLogger(LimitComparisonService.class);
 
     private final PortfolioRepository portfolioRepository;
     private final PositionRepository positionRepository;
@@ -95,7 +96,7 @@ public class LimitComparisonService {
 
         BigDecimal totalExposure = computeTotalExposure(positions);
 
-        logger.info("LimitCheck: portfolio={} limits={} positions={} totalExposure={}",
+        log.info("LimitCheck: portfolio={} limits={} positions={} totalExposure={}",
                 portfolioId, limits.size(), positions.size(), totalExposure);
 
         return limits.stream()
@@ -141,7 +142,7 @@ public class LimitComparisonService {
                 severity = classifySeverity(utilisationPct);
             }
 
-            logger.debug("LimitCheck: limitId={} type={} actual={} limit={} utilisation={} breached={}",
+            log.debug("LimitCheck: limitId={} type={} actual={} limit={} utilisation={} breached={}",
                     limit.getLimitId(), limit.getLimitType(), actualValue, limitValue, utilisationPct, breached);
 
             return LimitCheckResultDTO.builder()
@@ -161,7 +162,7 @@ public class LimitComparisonService {
                     .build();
 
         } catch (Exception ex) {
-            logger.warn("LimitCheck: failed to evaluate limitId={} type={} — {}",
+            log.warn("LimitCheck: failed to evaluate limitId={} type={} — {}",
                     limit.getLimitId(), limit.getLimitType(), ex.getMessage());
             return skippedResult(limit, portfolioId, "Evaluation error: " + ex.getMessage());
         }
