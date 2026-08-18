@@ -6,6 +6,9 @@ public enum LimitType {
     DURATION,
     LEVERAGE,
     DRAWDOWN,
-    SECTOR_EXPOSURE
+    SECTOR_EXPOSURE,
+    TOTAL_EXPOSURE,
+    SECTOR_CONC,
+    ASSET_CLASS_CONC,
+    SINGLE_NAME
 }
-

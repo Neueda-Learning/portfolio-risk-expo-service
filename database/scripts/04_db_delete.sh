@@ -49,23 +49,39 @@ PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
 
 # Drop database
 echo "Dropping database $DATABASE_NAME..."
-PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
+DB_DELETED=false
+if PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -h "$DATABASE_HOST" \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "DROP DATABASE IF EXISTS $DATABASE_NAME;" || \
-  echo "  → Database may not exist"
+  -c "DROP DATABASE IF EXISTS $DATABASE_NAME;" | grep -q "DROP DATABASE"; then
+  DB_DELETED=true
+else
+  echo "  -> Database may not exist or could not be dropped"
+fi
 
 # Drop user
 echo "Dropping user $DATABASE_USER..."
-PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
+USER_DELETED=false
+if PGPASSWORD="$DB_ADMIN_PASSWORD" psql \
   -h "$DATABASE_HOST" \
   -p "$DATABASE_PORT" \
   -U "$DB_ADMIN_USER" \
   -d "postgres" \
-  -c "DROP USER IF EXISTS $DATABASE_USER;" || \
-  echo "  → User may not exist"
+  -c "DROP USER IF EXISTS $DATABASE_USER;" | grep -q "DROP ROLE"; then
+  USER_DELETED=true
+else
+  echo "  -> User may not exist or could not be dropped"
+fi
 
 echo ""
-echo "Database and user deleted!"
+if $DB_DELETED && $USER_DELETED; then
+  echo "Database and user deleted!"
+elif $DB_DELETED; then
+  echo "Database deleted! (User was not deleted)"
+elif $USER_DELETED; then
+  echo "User deleted! (Database was not deleted)"
+else
+  echo "Neither database nor user were deleted."
+fi

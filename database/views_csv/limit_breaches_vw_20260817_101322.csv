@@ -1,0 +1,2 @@
+breach_id,limit_id,portfolio_id,portfolio_code,portfolio_name,manager,limit_type,limit_metric,breach_date,limit_value,actual_value,excess_amount,breach_pct,severity,status,acknowledged_by,acknowledged_at,resolution,days_open
+3,8,8,FI-GOVT,Government Bonds,Patricia Brown,VAR,Daily VaR (95%),2026-03-20,2000000.0000,2100000.0000,100000.0000,5.00,CRITICAL,OPEN,,,,150
