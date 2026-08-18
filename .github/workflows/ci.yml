@@ -52,10 +52,3 @@ jobs:
       with:
         name: test-results
         path: backend/app/target/surefire-reports/
-
-    - name: Publish test report
-      if: always()
-      uses: EnricoMi/publish-unit-test-result-action@v2
-      with:
-        files: backend/app/target/surefire-reports/**/*.xml
-        check_name: JUnit Test Results
