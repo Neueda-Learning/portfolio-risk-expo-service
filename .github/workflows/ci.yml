@@ -2,7 +2,7 @@ name: CI checks
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
   push:
     branches: [ main ]
   workflow_dispatch:
