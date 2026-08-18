@@ -35,10 +35,13 @@ import java.util.stream.Collectors;
  * <ul>
  *   <li><b>VAR</b> — 1-day historical VaR (confidence derived from limitMetric:
  *       contains "99" → 99 %, otherwise 95 %)</li>
- *   <li><b>CONCENTRATION</b> — maximum single-position weight (weight_pct) across
+ *   <li><b>CONCENTRATION / SINGLE_NAME</b> — maximum single-position weight (weight_pct) across
  *       all positions in the portfolio, expressed as a percentage</li>
- *   <li><b>SECTOR_EXPOSURE</b> — if limitMetric names a specific sector, the
+ *   <li><b>TOTAL_EXPOSURE</b> — total market value in base currency</li>
+ *   <li><b>SECTOR_EXPOSURE / SECTOR_CONC</b> — if limitMetric names a specific sector, the
  *       exposure % for that sector; otherwise the maximum sector exposure %</li>
+ *   <li><b>ASSET_CLASS_CONC</b> — if limitMetric names a specific asset class,
+ *       the exposure % for that class; otherwise the maximum asset-class exposure %</li>
  *   <li><b>LEVERAGE</b> — total market value in base currency divided by AUM
  *       (leverage ratio, e.g. 1.25)</li>
  *   <li><b>DURATION / DRAWDOWN</b> — skipped (insufficient data in current model)</li>
@@ -179,8 +182,12 @@ public class LimitComparisonService {
                                           Integer portfolioId) {
         return switch (limit.getLimitType()) {
             case VAR             -> computeVar(portfolioId, limit.getLimitMetric());
-            case CONCENTRATION   -> computeMaxConcentration(positions);
-            case SECTOR_EXPOSURE -> computeSectorExposure(positions, totalExposure, limit.getLimitMetric());
+            case TOTAL_EXPOSURE  -> totalExposure;
+            case CONCENTRATION,
+                    SINGLE_NAME  -> computeMaxConcentration(positions);
+            case SECTOR_EXPOSURE,
+                    SECTOR_CONC  -> computeSectorExposure(positions, totalExposure, limit.getLimitMetric());
+            case ASSET_CLASS_CONC -> computeAssetClassExposure(positions, totalExposure, limit.getLimitMetric());
             case LEVERAGE        -> computeLeverage(totalExposure, portfolio.getAum());
             // Not enough data in current model to compute these reliably
             case DURATION, DRAWDOWN -> null;
@@ -205,6 +212,46 @@ public class LimitComparisonService {
         return positions.stream()
                 .map(Position::getWeightPct)
                 .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(BigDecimal.ZERO);
+    }
+
+    /**
+     * Asset-class exposure as a percentage of total portfolio market value.
+     */
+    private BigDecimal computeAssetClassExposure(List<Position> positions,
+                                                 BigDecimal totalExposure,
+                                                 String limitMetric) {
+        if (totalExposure == null || totalExposure.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+
+        Map<String, BigDecimal> assetValues = positions.stream()
+                .filter(p -> p.getMarketValueBase() != null)
+                .collect(Collectors.groupingBy(
+                        p -> {
+                            if (p.getInstrument() == null
+                                    || p.getInstrument().getAssetClass() == null
+                                    || p.getInstrument().getAssetClass().getAssetClassName() == null
+                                    || p.getInstrument().getAssetClass().getAssetClassName().isBlank()) {
+                                return "UNASSIGNED";
+                            }
+                            return p.getInstrument().getAssetClass().getAssetClassName();
+                        },
+                        Collectors.reducing(BigDecimal.ZERO, Position::getMarketValueBase, BigDecimal::add)
+                ));
+
+        if (limitMetric != null && !limitMetric.isBlank() && assetValues.containsKey(limitMetric)) {
+            return assetValues.get(limitMetric)
+                    .divide(totalExposure, 6, RoundingMode.HALF_UP)
+                    .multiply(BigDecimal.valueOf(100))
+                    .setScale(4, RoundingMode.HALF_UP);
+        }
+
+        return assetValues.values().stream()
+                .map(v -> v.divide(totalExposure, 6, RoundingMode.HALF_UP)
+                        .multiply(BigDecimal.valueOf(100))
+                        .setScale(4, RoundingMode.HALF_UP))
                 .max(Comparator.naturalOrder())
                 .orElse(BigDecimal.ZERO);
     }
