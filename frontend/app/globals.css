@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #2660a6;
+  --color-app-bg: #f4f4f2;
+  --color-breach: #db0011;
+  --color-warning: #d97706;
+  --color-safe: #0b6b3a;
+}
+
+body {
+  background-color: var(--color-app-bg);
+  color: #111827;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Financial figures are always tabular and right-aligned */
+.tabular-financial {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
