@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, ChevronUp, ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 import { formatCurrency } from "@/lib/format";
 import { CONSTANTS } from "@/lib/constants";
@@ -41,15 +41,50 @@ function StatCard({
 function DetailRow({
   label,
   value,
+  className = "",
 }: {
   label: string;
   value: string;
+  className?: string;
 }) {
   return (
-    <div className="rounded-md bg-gray-50 px-3 py-2">
+    <div className={`rounded-md bg-gray-50 px-3 py-2 ${className}`}>
       <p className="text-xs text-gray-400">{label}</p>
       <p className="mt-0.5 text-sm font-semibold text-gray-900">{value}</p>
     </div>
+  );
+}
+
+function SortableHeader({
+  label,
+  isSorted,
+  sortDirection,
+  isNumeric = false,
+  onClick,
+}: {
+  label: string;
+  isSorted: boolean;
+  sortDirection: "asc" | "desc";
+  isNumeric?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 font-semibold hover:text-gray-700 ${isNumeric ? "justify-end" : ""}`}
+    >
+      {label}
+      {isSorted && (
+        <>
+          {sortDirection === "asc" ? (
+            <ChevronUp className="h-4 w-4 text-[#2660a6]" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-[#2660a6]" />
+          )}
+        </>
+      )}
+      {!isSorted && <span className="h-4 w-4" />}
+    </button>
   );
 }
 
@@ -62,17 +97,68 @@ export function PortfolioDetailsClient({
   const [selectedPositionId, setSelectedPositionId] = useState(
     details.positions[0]?.positionId ?? null
   );
+  const [sortColumn, setSortColumn] = useState<string>("instrument");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
-  const filteredPositions = useMemo(() => {
+  const filteredAndSortedPositions = useMemo(() => {
     const term = search.trim().toLowerCase();
-    if (!term) {
-      return details.positions;
+    let positions = details.positions;
+
+    if (term) {
+      positions = positions.filter((position) =>
+        position.instrumentName.toLowerCase().includes(term)
+      );
     }
 
-    return details.positions.filter((position) =>
-      position.instrumentName.toLowerCase().includes(term)
-    );
-  }, [details.positions, search]);
+    return [...positions].sort((a, b) => {
+      let aVal: string | number = "";
+      let bVal: string | number = "";
+
+      switch (sortColumn) {
+        case "instrument":
+          aVal = a.instrumentName.toLowerCase();
+          bVal = b.instrumentName.toLowerCase();
+          break;
+        case "isin":
+          aVal = a.instrumentIsin.toLowerCase();
+          bVal = b.instrumentIsin.toLowerCase();
+          break;
+        case "assetClass":
+          aVal = a.assetClass.toLowerCase();
+          bVal = b.assetClass.toLowerCase();
+          break;
+        case "weight":
+          aVal = a.weightPct;
+          bVal = b.weightPct;
+          break;
+        case "marketValue":
+          aVal = a.marketValueBase;
+          bVal = b.marketValueBase;
+          break;
+        default:
+          return 0;
+      }
+
+      if (typeof aVal === "string" && typeof bVal === "string") {
+        return sortDirection === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+      }
+
+      const numA = Number(aVal);
+      const numB = Number(bVal);
+      return sortDirection === "asc" ? numA - numB : numB - numA;
+    });
+  }, [details.positions, search, sortColumn, sortDirection]);
+
+  const handleSortClick = (column: string) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  };
+
+  const filteredPositions = filteredAndSortedPositions;
 
   const selectedPosition: PortfolioPosition | null = useMemo(() => {
     return (
@@ -88,15 +174,15 @@ export function PortfolioDetailsClient({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2660a6]">
-              {STRINGS.portfolioDetails.label}
+              {STRINGS.portfolioDetails.title}
             </p>
             <h1 className="mt-1 truncate text-2xl font-bold text-gray-900">
               {details.portfolioName}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              {details.portfolioCode} · {STRINGS.portfolioDetails.managedBy}{" "}
-              {details.manager} · {STRINGS.portfolioDetails.asOf}{" "}
-              {details.asOfDate}
+              {details.portfolioCode} <br/>
+              {STRINGS.portfolioDetails.meta.managedBy}{" "}{details.manager} <br/>
+              {STRINGS.portfolioDetails.meta.asOf}{" "}{details.asOfDate}
             </p>
           </div>
 
@@ -109,15 +195,15 @@ export function PortfolioDetailsClient({
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard label={STRINGS.portfolioDetails.aum} value={formatCurrency(details.aum, details.baseCurrency)} />
-          <StatCard label={STRINGS.portfolioDetails.baseCurrency} value={details.baseCurrency} />
+          <StatCard label={STRINGS.portfolioDetails.stats.aum} value={formatCurrency(details.aum, details.baseCurrency)} />
+          <StatCard label={STRINGS.portfolioDetails.stats.baseCurrency} value={details.baseCurrency} />
           <StatCard
-            label={STRINGS.portfolioDetails.positionsCount}
+            label={STRINGS.portfolioDetails.stats.positionsCount}
             value={String(details.positions.length)}
           />
           <StatCard
-            label={STRINGS.portfolioDetails.benchmark}
-            value={details.benchmark ?? STRINGS.portfolioDetails.unknown}
+            label={STRINGS.portfolioDetails.stats.benchmark}
+            value={details.benchmark ?? STRINGS.portfolioDetails.fallback.unknown}
           />
         </div>
       </section>
@@ -127,11 +213,8 @@ export function PortfolioDetailsClient({
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e5e7eb] p-4">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">
-                {STRINGS.portfolioDetails.positionsTitle}
+                {STRINGS.portfolioDetails.positions.title}
               </h2>
-              <p className="text-sm text-gray-500">
-                {STRINGS.portfolioDetails.positionsHelp}
-              </p>
             </div>
 
             <div className="relative w-full max-w-sm">
@@ -143,36 +226,63 @@ export function PortfolioDetailsClient({
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder={STRINGS.portfolioDetails.positionsSearchPlaceholder}
+                placeholder={STRINGS.portfolioDetails.positions.searchPlaceholder}
                 className="w-full rounded-md border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 outline-none focus:border-[#2660a6] focus:ring-1 focus:ring-[#2660a6]"
               />
             </div>
           </div>
 
           <div className="px-4 py-3 text-sm text-gray-500">
-            {STRINGS.portfolioDetails.positionsShowing} {filteredPositions.length}{" "}
-            {STRINGS.portfolioDetails.positionsOf} {details.positions.length}{" "}
-            {STRINGS.portfolioDetails.positionsSuffix}
+            {STRINGS.portfolioDetails.positions.showing} {filteredPositions.length}{" "}
+            {STRINGS.portfolioDetails.positions.of} {details.positions.length}{" "}
+            {STRINGS.portfolioDetails.positions.suffix}
           </div>
 
           <div className="max-h-[560px] overflow-auto border-t border-[#e5e7eb]">
             <table className="min-w-full border-collapse text-left text-sm">
               <thead className="sticky top-0 z-10 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th className="px-4 py-3 font-semibold">
-                    {STRINGS.portfolioDetails.tableInstrument}
+                  <th className="px-4 py-3 text-left">
+                    <SortableHeader
+                      label={STRINGS.portfolioDetails.table.instrument}
+                      isSorted={sortColumn === "instrument"}
+                      sortDirection={sortDirection}
+                      onClick={() => handleSortClick("instrument")}
+                    />
                   </th>
-                  <th className="px-4 py-3 font-semibold">
-                    {STRINGS.portfolioDetails.tableIsin}
+                  <th className="px-4 py-3 text-left">
+                    <SortableHeader
+                      label={STRINGS.portfolioDetails.table.isin}
+                      isSorted={sortColumn === "isin"}
+                      sortDirection={sortDirection}
+                      onClick={() => handleSortClick("isin")}
+                    />
                   </th>
-                  <th className="px-4 py-3 font-semibold">
-                    {STRINGS.portfolioDetails.tableAssetClass}
+                  <th className="px-4 py-3 text-left">
+                    <SortableHeader
+                      label={STRINGS.portfolioDetails.table.assetClass}
+                      isSorted={sortColumn === "assetClass"}
+                      sortDirection={sortDirection}
+                      onClick={() => handleSortClick("assetClass")}
+                    />
                   </th>
-                  <th className="px-4 py-3 font-semibold text-right">
-                    {STRINGS.portfolioDetails.tableWeight}
+                  <th className="px-4 py-3 text-right">
+                    <SortableHeader
+                      label={STRINGS.portfolioDetails.table.weight}
+                      isSorted={sortColumn === "weight"}
+                      sortDirection={sortDirection}
+                      isNumeric={true}
+                      onClick={() => handleSortClick("weight")}
+                    />
                   </th>
-                  <th className="px-4 py-3 font-semibold text-right">
-                    {STRINGS.portfolioDetails.tableMarketValue}
+                  <th className="px-4 py-3 text-right">
+                    <SortableHeader
+                      label={STRINGS.portfolioDetails.table.marketValue}
+                      isSorted={sortColumn === "marketValue"}
+                      sortDirection={sortDirection}
+                      isNumeric={true}
+                      onClick={() => handleSortClick("marketValue")}
+                    />
                   </th>
                 </tr>
               </thead>
@@ -184,18 +294,26 @@ export function PortfolioDetailsClient({
                     return (
                       <tr
                         key={position.positionId}
-                        className={isSelected ? "bg-[#2660a6]/5" : "hover:bg-gray-50"}
+                        onClick={() => setSelectedPositionId(position.positionId)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            setSelectedPositionId(position.positionId);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`Select ${position.instrumentName}`}
+                        className={`cursor-pointer ${
+                          isSelected ? "bg-[#2660a6]/5" : "hover:bg-gray-50"
+                        }`}
                       >
                         <td className="px-4 py-3">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedPositionId(position.positionId)}
-                            className="text-left font-semibold text-[#2660a6] hover:underline"
-                          >
+                          <span className="font-semibold text-[#2660a6]">
                             {position.instrumentName}
-                          </button>
+                          </span>
                           <p className="mt-0.5 text-xs text-gray-400">
-                            {position.sector ?? STRINGS.portfolioDetails.unknown}
+                            {position.sector ?? STRINGS.portfolioDetails.fallback.unknown}
                           </p>
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
@@ -214,7 +332,7 @@ export function PortfolioDetailsClient({
                 ) : (
                   <tr>
                     <td colSpan={5} className="px-4 py-10 text-center text-sm text-gray-500">
-                      {STRINGS.portfolioDetails.positionsEmpty}
+                      {STRINGS.portfolioDetails.positions.empty}
                     </td>
                   </tr>
                 )}
@@ -224,14 +342,9 @@ export function PortfolioDetailsClient({
         </section>
 
         <aside className="min-w-0 rounded-lg border border-[#e5e7eb] bg-white shadow-sm">
-          <div className="border-b border-[#e5e7eb] px-4 pt-4">
-            <div className="inline-flex rounded-t-md border border-b-0 border-[#e5e7eb] bg-white">
-              <button
-                type="button"
-                className="rounded-t-md border-b-2 border-[#2660a6] px-4 py-2 text-sm font-semibold text-[#2660a6]"
-              >
-                {STRINGS.portfolioDetails.tabTitle}
-              </button>
+          <div className="px-4 pt-4">
+            <div className="inline-flex border-b-2 border-[#2660a6] px-1 pb-2 text-sm font-semibold text-[#2660a6]">
+              {STRINGS.portfolioDetails.details.tabTitle}
             </div>
           </div>
 
@@ -239,48 +352,65 @@ export function PortfolioDetailsClient({
             <div className="space-y-4 p-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                  {STRINGS.portfolioDetails.selectedPosition}
+                  {STRINGS.portfolioDetails.details.selectedPosition}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-gray-900">
                   {selectedPosition.instrumentName}
                 </h3>
-                <p className="text-sm text-gray-500">
-                  {STRINGS.portfolioDetails.switchHelp}
-                </p>
               </div>
 
+
               <div className="grid gap-3 sm:grid-cols-2">
-                <DetailRow label={STRINGS.portfolioDetails.instrumentId} value={String(selectedPosition.instrumentId)} />
-                <DetailRow label={STRINGS.portfolioDetails.isin} value={selectedPosition.instrumentIsin} />
-                <DetailRow label={STRINGS.portfolioDetails.issuer} value={selectedPosition.issuer} />
-                <DetailRow label={STRINGS.portfolioDetails.assetClass} value={selectedPosition.assetClass} />
                 <DetailRow
-                  label={STRINGS.portfolioDetails.sector}
-                  value={selectedPosition.sector ?? STRINGS.portfolioDetails.unknown}
+                  label={STRINGS.portfolioDetails.labels.isin}
+                  value={selectedPosition.instrumentIsin}
+                  className="sm:col-span-2"
                 />
-                <DetailRow label={STRINGS.portfolioDetails.currency} value={selectedPosition.currency} />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.issuer}
+                  value={selectedPosition.issuer}
+                />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.assetClass}
+                  value={selectedPosition.assetClass}
+                />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.sector}
+                  value={selectedPosition.sector ?? STRINGS.portfolioDetails.fallback.unknown}
+                />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.currency}
+                  value={selectedPosition.currency}
+                />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-              <DetailRow label={STRINGS.portfolioDetails.quantity} value={formatDecimal(selectedPosition.quantity, 0)} />
                 <DetailRow
-                label={STRINGS.portfolioDetails.marketPrice}
+                  label={STRINGS.portfolioDetails.labels.quantity}
+                  value={formatDecimal(selectedPosition.quantity, 0)}
+                />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.marketPrice}
                   value={formatPrice(selectedPosition.marketPrice, selectedPosition.currency)}
                 />
                 <DetailRow
-                label={STRINGS.portfolioDetails.marketValue}
+                  label={STRINGS.portfolioDetails.labels.marketValue}
                   value={formatCurrency(selectedPosition.marketValue, details.baseCurrency)}
                 />
-              <DetailRow label={STRINGS.portfolioDetails.weight} value={`${formatDecimal(selectedPosition.weightPct, 2)}%`} />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.labels.weight}
+                  value={`${formatDecimal(selectedPosition.weightPct, 2)}%`}
+                />
               </div>
 
               <div className="rounded-md bg-gray-50 p-4 text-sm text-gray-600">
                 <p className="font-semibold text-gray-900">
-                  {STRINGS.portfolioDetails.snapshotTitle}
+                  {STRINGS.portfolioDetails.details.snapshotTitle}
                 </p>
                 <p className="mt-1">
                   {selectedPosition.instrumentName} is the currently selected instrument.
-                  {STRINGS.portfolioDetails.snapshotText}
+                  {" "}
+                  {STRINGS.portfolioDetails.details.snapshotText}
                 </p>
               </div>
             </div>

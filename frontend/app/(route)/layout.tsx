@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 import { Bell, BarChart2, Search } from "lucide-react";
 import "../globals.css";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: STRINGS.app.title,
@@ -16,8 +22,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-[#f4f4f2]">
+    <html lang="en" className={inter.variable}>
+      <body className={`${inter.className} min-h-screen bg-[#f4f4f2]`}>
         {/* ── Top Navigation Bar ─────────────────────────────────────── */}
         <header className="sticky top-0 z-50 bg-[#2660a6] shadow-md">
           <div className="mx-auto flex h-14 max-w-screen-2xl items-center gap-4 px-4 sm:px-6">
