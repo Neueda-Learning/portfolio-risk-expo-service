@@ -21,7 +21,7 @@ import java.util.List;
 public class LimitService {
     private final LimitBreachRepository limitBreachRepository;
 
-    public LimitBreachResponseDTO getLimitBreachesByStatus(LimitBreachStatus status) {
+    public List<LimitBreachDTO> getLimitBreachesByStatus(LimitBreachStatus status) {
         log.info("Limit breaches lookup started: status={}", status);
 
         //This maps breaches to Limits, not breaches themselves - might be used somewhere else
@@ -39,10 +39,7 @@ public class LimitService {
             log.info("Limit breaches lookup completed: status={} count={}", status, limitBreaches.size());
         }
 
-        return LimitBreachResponseDTO.builder()
-                .status(status)
-                .limits(limitBreaches)
-                .build();
+        return limitBreaches;
     }
 
     private LimitBreachDTO toLimitBreachDto(LimitBreach limitBreach) {
