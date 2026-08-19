@@ -4,7 +4,6 @@ import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.InsufficientPriceHistoryException;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.model.*;
-import com.risk_busters.app.exceptions.PortfolioNotFoundException;
 import com.risk_busters.app.repository.LimitRepository;
 import com.risk_busters.app.repository.PriceHistoryRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
@@ -383,7 +382,7 @@ public class PortfolioRiskService {
         return portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> {
                     log.error("Portfolio lookup failed: portfolioId={} reason=Portfolio not found", portfolioId);
-                    return new PortfolioNotFoundException(portfolioId);
+                    return new ResourceNotFoundException("Portfolio not found with id: " + portfolioId);
                 });
     }
     private boolean isWarningApproaching(LimitDetailDTO detail) {
@@ -399,4 +398,3 @@ public class PortfolioRiskService {
                 && detail.getUtilisationPct().compareTo(new BigDecimal("90")) >= 0;
     }
 }
-

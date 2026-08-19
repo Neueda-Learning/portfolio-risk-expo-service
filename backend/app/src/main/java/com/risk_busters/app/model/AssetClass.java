@@ -1,21 +1,22 @@
 package com.risk_busters.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Entity
 @Table(name = "asset_class")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"instruments"})
+@EqualsAndHashCode(exclude = {"instruments"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
