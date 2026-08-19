@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bell, BarChart2, Search } from "lucide-react";
 import "../globals.css";
+import { CONSTANTS } from "@/lib/constants";
+import { STRINGS } from "@/lib/strings";
 
 export const metadata: Metadata = {
-  title: "Portfolio Risk & Exposure",
-  description: "Portfolio Risk & Exposure Service — Risk Busters",
+  title: STRINGS.app.title,
+  description: STRINGS.app.description,
 };
 
 export default function RootLayout({
@@ -21,12 +23,12 @@ export default function RootLayout({
           <div className="mx-auto flex h-14 max-w-screen-2xl items-center gap-4 px-4 sm:px-6">
             {/* Logo / Brand */}
             <Link
-              href="/"
+              href={CONSTANTS.routes.home}
               className="flex shrink-0 items-center gap-2 text-white"
             >
               <BarChart2 className="h-6 w-6" aria-hidden="true" />
               <span className="hidden text-sm font-semibold tracking-wide sm:block">
-                Risk &amp; Exposure
+                {STRINGS.app.brand}
               </span>
             </Link>
 
@@ -38,7 +40,7 @@ export default function RootLayout({
               />
               <input
                 type="search"
-                placeholder="Search portfolios…"
+                placeholder={STRINGS.app.searchPortfoliosPlaceholder}
                 className="w-full rounded-md bg-white/15 py-1.5 pl-9 pr-3 text-sm text-white placeholder-white/60 outline-none ring-1 ring-white/20 focus:bg-white/20 focus:ring-white/50"
               />
             </div>
@@ -47,7 +49,7 @@ export default function RootLayout({
               {/* Notification Bell */}
               <button
                 type="button"
-                aria-label="Notifications"
+                aria-label={STRINGS.app.notificationsAriaLabel}
                 className="relative rounded-full p-1.5 text-white/80 hover:bg-white/15 hover:text-white"
               >
                 <Bell className="h-5 w-5" />

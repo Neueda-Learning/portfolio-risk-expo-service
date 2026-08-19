@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PortfolioDetailsClient } from "@/components/portfolio/PortfolioDetailsClient";
 import { getMockPortfolioDetails } from "@/lib/mock/portfolio-details";
+import { STRINGS } from "@/lib/strings";
 
 export async function generateMetadata({
   params,
@@ -12,13 +13,13 @@ export async function generateMetadata({
   const portfolioId = Number(id);
   if (Number.isNaN(portfolioId)) {
     return {
-      title: "Portfolio details",
+      title: STRINGS.portfolioDetails.title,
     };
   }
 
   const details = getMockPortfolioDetails(portfolioId);
   return {
-    title: `${details.portfolioName} | Portfolio details`,
+  title: `${details.portfolioName} | ${STRINGS.portfolioDetails.title}`,
   };
 }
 

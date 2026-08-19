@@ -6,6 +6,8 @@ import { AlertTriangle } from "lucide-react";
 import { getPortfolios, getOpenBreaches } from "@/lib/api";
 import { PortfolioCard } from "@/components/dashboard/PortfolioCard";
 import { GlobalAlertsPanel } from "@/components/dashboard/GlobalAlertsPanel";
+import { CONSTANTS } from "@/lib/constants";
+import { STRINGS } from "@/lib/strings";
 
 export default async function DashboardPage() {
   const [portfolios, openBreaches] = await Promise.all([
@@ -28,21 +30,27 @@ export default async function DashboardPage() {
       <section className="min-w-0 flex-1">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-bold text-gray-900">Portfolio Overview</h1>
+            <h1 className="text-lg font-bold text-gray-900">
+              {STRINGS.dashboard.title}
+            </h1>
             <p className="text-sm text-gray-500">
-              {activePortfolios.length} active portfolio
-              {activePortfolios.length !== 1 ? "s" : ""}
+              {activePortfolios.length}{" "}
+              {activePortfolios.length === 1
+                ? STRINGS.dashboard.activePortfolioSingular
+                : STRINGS.dashboard.activePortfolioPlural}
             </p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
             {openBreaches.length > 0 && (
               <Link
-                href="/breaches?status=OPEN"
+                href={`${CONSTANTS.routes.breaches}?status=OPEN`}
                 className="flex items-center gap-1.5 rounded-full border-2 border-[#2660a6] bg-white px-3 py-1 text-xs font-semibold text-[#db0011] shadow-md hover:bg-[#2660a6]/5"
               >
                 <AlertTriangle className="h-3.5 w-3.5" />
-                {openBreaches.length} open breach
-                {openBreaches.length !== 1 ? "es" : ""}
+                {openBreaches.length}{" "}
+                {openBreaches.length === 1
+                  ? STRINGS.dashboard.openBreachSingular
+                  : STRINGS.dashboard.openBreachPlural}
               </Link>
             )}
           </div>

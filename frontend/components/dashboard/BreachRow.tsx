@@ -2,6 +2,8 @@ import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 import { SeverityBadge } from "@/components/ui/SeverityBadge";
 import { formatCurrency } from "@/lib/format";
+import { CONSTANTS } from "@/lib/constants";
+import { STRINGS } from "@/lib/strings";
 import type { LimitBreach } from "@/types";
 
 export function BreachRow({ breach }: { breach: LimitBreach }) {
@@ -21,7 +23,7 @@ export function BreachRow({ breach }: { breach: LimitBreach }) {
           )}
         </div>
         <p className="mt-1 text-xs text-gray-500">
-          Excess:{" "}
+          {STRINGS.alerts.excess}:{" "}
           <span className="font-semibold text-[#db0011]">
             {formatCurrency(breach.excessAmount, "GBP")}
           </span>{" "}
@@ -32,10 +34,10 @@ export function BreachRow({ breach }: { breach: LimitBreach }) {
         )}
       </div>
       <Link
-        href={`/breaches?portfolioId=${breach.portfolioId}`}
+        href={`${CONSTANTS.routes.breaches}?portfolioId=${breach.portfolioId}`}
         className="shrink-0 text-xs text-[#2660a6] hover:underline"
       >
-        View
+        {STRINGS.alerts.view}
       </Link>
     </div>
   );

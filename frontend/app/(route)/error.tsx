@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AlertTriangle, RefreshCw, ServerOff } from "lucide-react";
+import { STRINGS } from "@/lib/strings";
 
 export default function Error({
   error,
@@ -28,13 +29,15 @@ export default function Error({
         </div>
 
         <h1 className="mb-1 text-lg font-bold text-gray-900">
-          {isConnectionError ? "Backend Unreachable" : "Data Unavailable"}
+          {isConnectionError
+            ? STRINGS.errors.backendUnreachableTitle
+            : STRINGS.errors.dataUnavailableTitle}
         </h1>
 
         <p className="mb-1 text-sm text-gray-600">
           {isConnectionError
-            ? "The portfolio service at 127.0.0.1:8080 could not be reached."
-            : "An error occurred while loading portfolio data."}
+            ? STRINGS.errors.backendUnreachableMessage
+            : STRINGS.errors.dataUnavailableMessage}
         </p>
 
         {error.message && (
@@ -48,7 +51,7 @@ export default function Error({
           className="inline-flex items-center gap-2 rounded-md bg-[#2660a6] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1e4f8a] focus:outline-none focus:ring-2 focus:ring-[#2660a6] focus:ring-offset-2"
         >
           <RefreshCw className="h-4 w-4" aria-hidden="true" />
-          Try again
+          {STRINGS.errors.tryAgain}
         </button>
       </div>
     </div>

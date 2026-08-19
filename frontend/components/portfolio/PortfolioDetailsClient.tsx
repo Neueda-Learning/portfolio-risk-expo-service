@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { formatCurrency } from "@/lib/format";
+import { CONSTANTS } from "@/lib/constants";
+import { STRINGS } from "@/lib/strings";
 import type { PortfolioDetails, PortfolioPosition } from "@/lib/mock/portfolio-details";
 
 function formatDecimal(value: number, maximumFractionDigits = 2): string {
@@ -86,30 +88,37 @@ export function PortfolioDetailsClient({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#2660a6]">
-              Portfolio details
+              {STRINGS.portfolioDetails.label}
             </p>
             <h1 className="mt-1 truncate text-2xl font-bold text-gray-900">
               {details.portfolioName}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              {details.portfolioCode} · Managed by {details.manager} · As of{" "}
+              {details.portfolioCode} · {STRINGS.portfolioDetails.managedBy}{" "}
+              {details.manager} · {STRINGS.portfolioDetails.asOf}{" "}
               {details.asOfDate}
             </p>
           </div>
 
           <Link
-            href="/"
+            href={CONSTANTS.routes.home}
             className="rounded-md border border-[#2660a6] bg-white px-3 py-2 text-sm font-semibold text-[#2660a6] hover:bg-[#2660a6]/5"
           >
-            Back to overview
+            {STRINGS.portfolioDetails.backToOverview}
           </Link>
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard label="AUM" value={formatCurrency(details.aum, details.baseCurrency)} />
-          <StatCard label="Base currency" value={details.baseCurrency} />
-          <StatCard label="Positions" value={String(details.positions.length)} />
-          <StatCard label="Benchmark" value={details.benchmark ?? "—"} />
+          <StatCard label={STRINGS.portfolioDetails.aum} value={formatCurrency(details.aum, details.baseCurrency)} />
+          <StatCard label={STRINGS.portfolioDetails.baseCurrency} value={details.baseCurrency} />
+          <StatCard
+            label={STRINGS.portfolioDetails.positionsCount}
+            value={String(details.positions.length)}
+          />
+          <StatCard
+            label={STRINGS.portfolioDetails.benchmark}
+            value={details.benchmark ?? STRINGS.portfolioDetails.unknown}
+          />
         </div>
       </section>
 
@@ -117,9 +126,11 @@ export function PortfolioDetailsClient({
         <section className="min-w-0 rounded-lg border border-[#e5e7eb] bg-white shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e5e7eb] p-4">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Positions</h2>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {STRINGS.portfolioDetails.positionsTitle}
+              </h2>
               <p className="text-sm text-gray-500">
-                Search by instrument name to filter the list.
+                {STRINGS.portfolioDetails.positionsHelp}
               </p>
             </div>
 
@@ -132,25 +143,37 @@ export function PortfolioDetailsClient({
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search positions..."
+                placeholder={STRINGS.portfolioDetails.positionsSearchPlaceholder}
                 className="w-full rounded-md border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 outline-none focus:border-[#2660a6] focus:ring-1 focus:ring-[#2660a6]"
               />
             </div>
           </div>
 
           <div className="px-4 py-3 text-sm text-gray-500">
-            Showing {filteredPositions.length} of {details.positions.length} positions
+            {STRINGS.portfolioDetails.positionsShowing} {filteredPositions.length}{" "}
+            {STRINGS.portfolioDetails.positionsOf} {details.positions.length}{" "}
+            {STRINGS.portfolioDetails.positionsSuffix}
           </div>
 
           <div className="max-h-[560px] overflow-auto border-t border-[#e5e7eb]">
             <table className="min-w-full border-collapse text-left text-sm">
               <thead className="sticky top-0 z-10 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                 <tr>
-                  <th className="px-4 py-3 font-semibold">Instrument</th>
-                  <th className="px-4 py-3 font-semibold">ISIN</th>
-                  <th className="px-4 py-3 font-semibold">Asset class</th>
-                  <th className="px-4 py-3 font-semibold text-right">Weight</th>
-                  <th className="px-4 py-3 font-semibold text-right">Market value</th>
+                  <th className="px-4 py-3 font-semibold">
+                    {STRINGS.portfolioDetails.tableInstrument}
+                  </th>
+                  <th className="px-4 py-3 font-semibold">
+                    {STRINGS.portfolioDetails.tableIsin}
+                  </th>
+                  <th className="px-4 py-3 font-semibold">
+                    {STRINGS.portfolioDetails.tableAssetClass}
+                  </th>
+                  <th className="px-4 py-3 font-semibold text-right">
+                    {STRINGS.portfolioDetails.tableWeight}
+                  </th>
+                  <th className="px-4 py-3 font-semibold text-right">
+                    {STRINGS.portfolioDetails.tableMarketValue}
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -171,7 +194,9 @@ export function PortfolioDetailsClient({
                           >
                             {position.instrumentName}
                           </button>
-                          <p className="mt-0.5 text-xs text-gray-400">{position.sector ?? "—"}</p>
+                          <p className="mt-0.5 text-xs text-gray-400">
+                            {position.sector ?? STRINGS.portfolioDetails.unknown}
+                          </p>
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
                           {position.instrumentIsin}
@@ -189,7 +214,7 @@ export function PortfolioDetailsClient({
                 ) : (
                   <tr>
                     <td colSpan={5} className="px-4 py-10 text-center text-sm text-gray-500">
-                      No positions match your search.
+                      {STRINGS.portfolioDetails.positionsEmpty}
                     </td>
                   </tr>
                 )}
@@ -205,7 +230,7 @@ export function PortfolioDetailsClient({
                 type="button"
                 className="rounded-t-md border-b-2 border-[#2660a6] px-4 py-2 text-sm font-semibold text-[#2660a6]"
               >
-                Instrument details
+                {STRINGS.portfolioDetails.tabTitle}
               </button>
             </div>
           </div>
@@ -214,43 +239,48 @@ export function PortfolioDetailsClient({
             <div className="space-y-4 p-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                  Selected position
+                  {STRINGS.portfolioDetails.selectedPosition}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-gray-900">
                   {selectedPosition.instrumentName}
                 </h3>
                 <p className="text-sm text-gray-500">
-                  Click a position instrument to switch the details tab.
+                  {STRINGS.portfolioDetails.switchHelp}
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <DetailRow label="Instrument ID" value={String(selectedPosition.instrumentId)} />
-                <DetailRow label="ISIN" value={selectedPosition.instrumentIsin} />
-                <DetailRow label="Issuer" value={selectedPosition.issuer} />
-                <DetailRow label="Asset class" value={selectedPosition.assetClass} />
-                <DetailRow label="Sector" value={selectedPosition.sector ?? "—"} />
-                <DetailRow label="Currency" value={selectedPosition.currency} />
+                <DetailRow label={STRINGS.portfolioDetails.instrumentId} value={String(selectedPosition.instrumentId)} />
+                <DetailRow label={STRINGS.portfolioDetails.isin} value={selectedPosition.instrumentIsin} />
+                <DetailRow label={STRINGS.portfolioDetails.issuer} value={selectedPosition.issuer} />
+                <DetailRow label={STRINGS.portfolioDetails.assetClass} value={selectedPosition.assetClass} />
+                <DetailRow
+                  label={STRINGS.portfolioDetails.sector}
+                  value={selectedPosition.sector ?? STRINGS.portfolioDetails.unknown}
+                />
+                <DetailRow label={STRINGS.portfolioDetails.currency} value={selectedPosition.currency} />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <DetailRow label="Quantity" value={formatDecimal(selectedPosition.quantity, 0)} />
+              <DetailRow label={STRINGS.portfolioDetails.quantity} value={formatDecimal(selectedPosition.quantity, 0)} />
                 <DetailRow
-                  label="Market price"
+                label={STRINGS.portfolioDetails.marketPrice}
                   value={formatPrice(selectedPosition.marketPrice, selectedPosition.currency)}
                 />
                 <DetailRow
-                  label="Market value"
+                label={STRINGS.portfolioDetails.marketValue}
                   value={formatCurrency(selectedPosition.marketValue, details.baseCurrency)}
                 />
-                <DetailRow label="Weight" value={`${formatDecimal(selectedPosition.weightPct, 2)}%`} />
+              <DetailRow label={STRINGS.portfolioDetails.weight} value={`${formatDecimal(selectedPosition.weightPct, 2)}%`} />
               </div>
 
               <div className="rounded-md bg-gray-50 p-4 text-sm text-gray-600">
-                <p className="font-semibold text-gray-900">Position snapshot</p>
+                <p className="font-semibold text-gray-900">
+                  {STRINGS.portfolioDetails.snapshotTitle}
+                </p>
                 <p className="mt-1">
                   {selectedPosition.instrumentName} is the currently selected instrument.
-                  The real instrument details view can replace this mock tab later.
+                  {STRINGS.portfolioDetails.snapshotText}
                 </p>
               </div>
             </div>
