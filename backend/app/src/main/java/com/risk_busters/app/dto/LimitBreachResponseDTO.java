@@ -11,5 +11,5 @@ import java.util.List;
 @Builder
 public class LimitBreachResponseDTO {
     private LimitBreachStatus status;
-    private List<LimitDetailDTO> limits;
+    private List<LimitBreachDTO> limits;
 }
