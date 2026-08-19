@@ -14,7 +14,7 @@ export function PortfolioCard({
 }) {
   return (
     <Link
-      href={`/portfolios/${portfolio.portfolioId}`}
+      href={`/frontend/app/(route)/portfolios/${portfolio.portfolioId}`}
       className="group flex flex-col rounded-lg border border-[#e5e7eb] bg-white shadow-sm transition hover:shadow-md hover:border-[#2660a6]/40"
     >
       {/* Card header */}
