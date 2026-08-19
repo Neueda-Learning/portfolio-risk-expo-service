@@ -57,9 +57,6 @@ export const STRINGS = {
     details: {
       tabTitle: "Instrument details",
       selectedPosition: "Selected position",
-      snapshotTitle: "Position snapshot",
-      snapshotText:
-        "The real instrument details view can replace this mock tab later.",
     },
     labels: {
       instrumentId: "Instrument ID",

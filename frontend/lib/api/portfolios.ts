@@ -1,4 +1,4 @@
-import type {Portfolio, PortfolioExposure, Position, PortfolioVar} from "@/types";
+import type {Portfolio, PortfolioExposure, PortfolioPositionApiRow, PortfolioVar} from "@/types";
 import { apiFetch } from "./client";
 
 export async function getPortfolios(): Promise<Portfolio[]> {
@@ -13,8 +13,8 @@ export async function getPortfolioId(
 
 export async function getPositionsFromPortfolioId(
     portfolioId: number,
-): Promise<Position[]> {
-  return apiFetch<Position[]>(`/api/portfolios/${portfolioId}/positions`);
+): Promise<PortfolioPositionApiRow[]> {
+  return apiFetch<PortfolioPositionApiRow[]>(`/api/portfolios/${portfolioId}/positions`);
 }
 
 export async function getPortfolioExposure(

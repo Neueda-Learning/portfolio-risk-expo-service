@@ -24,15 +24,16 @@ export interface Portfolio {
 
 export interface Instrument {
   instrumentId: number;
-  instrumentIsin: string;
+  instrumentIsin?: string;
   instrumentName: string;
-  assetClassId: number;
-  currency: string;
+  currency?: string;
   issueDate?: string;
   maturityDate?: string;
   issuer?: string;
   sector?: string | null;
-  isActive: boolean;
+  assetClass?: string;
+  assetClassId?: number;
+  isActive?: boolean;
   createdAt?: string;
 }
 
@@ -51,6 +52,10 @@ export interface Position {
   costBasis?: number;
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface PortfolioPositionApiRow extends Position {
+  instrumentName: string;
 }
 
 export interface PortfolioPositionWithInstrument extends Position {

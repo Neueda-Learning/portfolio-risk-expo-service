@@ -120,12 +120,12 @@ export function PortfolioDetailsClient({
           bVal = b.instrument.instrumentName.toLowerCase();
           break;
         case "isin":
-          aVal = a.instrument.instrumentIsin.toLowerCase();
-          bVal = b.instrument.instrumentIsin.toLowerCase();
+          aVal = (a.instrument.instrumentIsin ?? "").toLowerCase();
+          bVal = (b.instrument.instrumentIsin ?? "").toLowerCase();
           break;
         case "assetClass":
-          aVal = a.instrument.assetClassId;
-          bVal = b.instrument.assetClassId;
+          aVal = (a.instrument.assetClass ?? "").toLowerCase();
+          bVal = (b.instrument.assetClass ?? "").toLowerCase();
           break;
         case "weight":
           aVal = a.weightPct;
@@ -317,9 +317,11 @@ export function PortfolioDetailsClient({
                           </p>
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
-                          {position.instrument.instrumentIsin}
+                          {position.instrument.instrumentIsin ?? STRINGS.portfolioDetails.fallback.unknown}
                         </td>
-                        <td className="px-4 py-3 text-gray-700">{position.instrument.assetClassId}</td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {position.instrument.assetClass ?? STRINGS.portfolioDetails.fallback.unknown}
+                        </td>
                         <td className="px-4 py-3 text-right tabular-nums text-gray-700">
                           {formatDecimal(position.weightPct, 2)}%
                         </td>
@@ -363,7 +365,7 @@ export function PortfolioDetailsClient({
               <div className="grid gap-3 sm:grid-cols-2">
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.isin}
-                  value={selectedPosition.instrument.instrumentIsin}
+                  value={selectedPosition.instrument.instrumentIsin ?? STRINGS.portfolioDetails.fallback.unknown}
                   className="sm:col-span-2"
                 />
                 <DetailRow
@@ -372,7 +374,7 @@ export function PortfolioDetailsClient({
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.assetClass}
-                  value={String(selectedPosition.instrument.assetClassId)}
+                  value={selectedPosition.instrument.assetClass ?? STRINGS.portfolioDetails.fallback.unknown}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.sector}
@@ -380,7 +382,7 @@ export function PortfolioDetailsClient({
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.currency}
-                  value={selectedPosition.instrument.currency}
+                  value={selectedPosition.instrument.currency ?? details.baseCurrency}
                 />
               </div>
 
@@ -391,7 +393,7 @@ export function PortfolioDetailsClient({
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.marketPrice}
-                  value={formatPrice(selectedPosition.marketPrice, selectedPosition.instrument.currency)}
+                  value={formatPrice(selectedPosition.marketPrice, selectedPosition.instrument.currency ?? details.baseCurrency)}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.marketValue}
@@ -401,17 +403,6 @@ export function PortfolioDetailsClient({
                   label={STRINGS.portfolioDetails.labels.weight}
                   value={`${formatDecimal(selectedPosition.weightPct, 2)}%`}
                 />
-              </div>
-
-              <div className="rounded-md bg-gray-50 p-4 text-sm text-gray-600">
-                <p className="font-semibold text-gray-900">
-                  {STRINGS.portfolioDetails.details.snapshotTitle}
-                </p>
-                <p className="mt-1">
-                  {selectedPosition.instrument.instrumentName} is the currently selected instrument.
-                  {" "}
-                  {STRINGS.portfolioDetails.details.snapshotText}
-                </p>
               </div>
             </div>
           ) : (
