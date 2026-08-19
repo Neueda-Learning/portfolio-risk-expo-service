@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/portfolios")
@@ -18,6 +19,13 @@ public class PortfolioController {
 
     private final PortfolioRiskService portfolioRiskService;
     private final PortfolioSnapshotService portfolioSnapshotService;
+
+    @GetMapping
+    public ResponseEntity <List<PortfoliosDTO>> getPortfolios(){
+        log.info("Get all portfolios request received at /api/portfolios");
+        List<PortfoliosDTO> allPortfolios = portfolioRiskService.getAllPortfolios();
+        return ResponseEntity.ok(allPortfolios);
+    }
 
     /**
      * GET /api/portfolios/{id}/exposure

@@ -397,4 +397,27 @@ public class PortfolioRiskService {
         return detail.getUtilisationPct() != null
                 && detail.getUtilisationPct().compareTo(new BigDecimal("90")) >= 0;
     }
+
+    public List<PortfoliosDTO> getAllPortfolios() {
+        List<Portfolio> portfolios = portfolioRepository.findAll();
+        if (portfolios.isEmpty()){
+            log.warn("No portfolios found");
+        }else{
+            log.info("Portfolios retrieval finished. Found: {}", portfolios.size());
+        }
+        return portfolios.stream()
+                .map(portfolio -> new PortfoliosDTO(
+                        portfolio.getPortfolioId(),
+                        portfolio.getPortfolioCode(),
+                        portfolio.getPortfolioName(),
+                        portfolio.getPortfolioType(),
+                        portfolio.getBaseCurrency(),
+                        portfolio.getAum(),
+                        portfolio.getBenchmark(),
+                        portfolio.getRiskMandate(),
+                        portfolio.getManager(),
+                        portfolio.getIsActive()
+                ))
+                .collect(Collectors.toList());
+    }
 }
