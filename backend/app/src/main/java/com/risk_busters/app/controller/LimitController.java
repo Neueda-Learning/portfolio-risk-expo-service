@@ -25,6 +25,11 @@ public class LimitController {
     private final LimitBreachPersistenceService limitBreachPersistenceService;
     private final PortfolioRepository portfolioRepository;
 
+    @GetMapping
+    public ResponseEntity<List<LimitDetailDTO>> getAllLimits(){
+        return ResponseEntity.ok(limitService.getAllLimits());
+    }
+
     @GetMapping("/breaches")
     public ResponseEntity<List<LimitBreachDTO>> getLimitBreaches(
             @RequestParam(name = "status", defaultValue = "OPEN") LimitBreachStatus status) {

@@ -16,5 +16,7 @@ public interface PositionRepository extends JpaRepository<Position, Integer> {
     
     @Query("SELECT COUNT(p) FROM Position p WHERE p.portfolio.portfolioId = :portfolioId")
     Integer countByPortfolioId(@Param("portfolioId") Integer portfolioId);
+
+    List<Position> findAllByPortfolioPortfolioId(Integer portfolioId);
 }
 

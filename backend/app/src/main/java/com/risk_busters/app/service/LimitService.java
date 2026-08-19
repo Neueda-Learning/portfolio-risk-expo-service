@@ -2,12 +2,15 @@ package com.risk_busters.app.service;
 
 import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
+import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitBreach;
 import com.risk_busters.app.model.LimitBreachStatus;
 import com.risk_busters.app.repository.LimitBreachRepository;
+import com.risk_busters.app.repository.LimitRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +23,8 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class LimitService {
     private final LimitBreachRepository limitBreachRepository;
+    private final LimitRepository limitRepository;
+    private final LimitMapper limitMapper;
 
     public List<LimitBreachDTO> getLimitBreachesByStatus(LimitBreachStatus status) {
         log.info("Limit breaches lookup started: status={}", status);
@@ -97,7 +102,7 @@ public class LimitService {
                 .build();
     }
 
-    private LimitDetailDTO toLimitDetailDto(LimitBreach breach) {
+    private LimitDetailDTO breachToLimitDetailDto(LimitBreach breach) {
         Limit limit = breach.getLimit();
 
         return LimitDetailDTO.builder()
@@ -114,5 +119,15 @@ public class LimitService {
                 .isBreached(breach.getStatus() != LimitBreachStatus.RESOLVED
                         && breach.getStatus() != LimitBreachStatus.WAIVED)
                 .build();
+    }
+
+    public @Nullable List<LimitDetailDTO> getAllLimits() {
+        log.info("Limits lookup started");
+        List<LimitDetailDTO> limits = limitRepository.findAll()
+                .stream().map(limitMapper::toDto).toList();
+        if (limits.isEmpty()){
+            log.warn("No limits found");
+        }
+        return limits;
     }
 }
