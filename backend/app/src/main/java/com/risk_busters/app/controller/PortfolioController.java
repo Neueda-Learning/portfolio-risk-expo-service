@@ -26,6 +26,13 @@ public class PortfolioController {
         List<PortfoliosDTO> allPortfolios = portfolioRiskService.getAllPortfolios();
         return ResponseEntity.ok(allPortfolios);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<PortfoliosDTO> getPortfolioById(@PathVariable Integer id){
+        log.info("Attempting to retrieve portfolio by id: {}", id);
+        PortfoliosDTO portfolio = portfolioRiskService.getPortfolioById(id);
+        return ResponseEntity.ok(portfolio);
+
+    }
 
     /**
      * GET /api/portfolios/{id}/exposure

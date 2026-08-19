@@ -420,4 +420,20 @@ public class PortfolioRiskService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    public PortfoliosDTO getPortfolioById(Integer id) {
+        Portfolio portfolio = loadPortfolio(id);
+        return new PortfoliosDTO(
+                portfolio.getPortfolioId(),
+                portfolio.getPortfolioCode(),
+                portfolio.getPortfolioName(),
+                portfolio.getPortfolioType(),
+                portfolio.getBaseCurrency(),
+                portfolio.getAum(),
+                portfolio.getBenchmark(),
+                portfolio.getRiskMandate(),
+                portfolio.getManager(),
+                portfolio.getIsActive()
+        );
+    }
 }
