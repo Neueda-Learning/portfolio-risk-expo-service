@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { formatCurrency } from "@/lib/format";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
-import type { PortfolioDetails, PortfolioPosition } from "@/lib/mock/portfolio-details";
+import type { PortfolioDetails, PortfolioPositionWithInstrument } from "@/types";
 
 function formatDecimal(value: number, maximumFractionDigits = 2): string {
   return new Intl.NumberFormat("en-GB", {
@@ -106,7 +106,7 @@ export function PortfolioDetailsClient({
 
     if (term) {
       positions = positions.filter((position) =>
-        position.instrumentName.toLowerCase().includes(term)
+        position.instrument.instrumentName.toLowerCase().includes(term)
       );
     }
 
@@ -116,16 +116,16 @@ export function PortfolioDetailsClient({
 
       switch (sortColumn) {
         case "instrument":
-          aVal = a.instrumentName.toLowerCase();
-          bVal = b.instrumentName.toLowerCase();
+          aVal = a.instrument.instrumentName.toLowerCase();
+          bVal = b.instrument.instrumentName.toLowerCase();
           break;
         case "isin":
-          aVal = a.instrumentIsin.toLowerCase();
-          bVal = b.instrumentIsin.toLowerCase();
+          aVal = a.instrument.instrumentIsin.toLowerCase();
+          bVal = b.instrument.instrumentIsin.toLowerCase();
           break;
         case "assetClass":
-          aVal = a.assetClass.toLowerCase();
-          bVal = b.assetClass.toLowerCase();
+          aVal = a.instrument.assetClassId;
+          bVal = b.instrument.assetClassId;
           break;
         case "weight":
           aVal = a.weightPct;
@@ -160,7 +160,7 @@ export function PortfolioDetailsClient({
 
   const filteredPositions = filteredAndSortedPositions;
 
-  const selectedPosition: PortfolioPosition | null = useMemo(() => {
+  const selectedPosition: PortfolioPositionWithInstrument | null = useMemo(() => {
     return (
       details.positions.find((position) => position.positionId === selectedPositionId) ??
       filteredPositions[0] ??
@@ -182,7 +182,7 @@ export function PortfolioDetailsClient({
             <p className="mt-1 text-sm text-gray-500">
               {details.portfolioCode} <br/>
               {STRINGS.portfolioDetails.meta.managedBy}{" "}{details.manager} <br/>
-              {STRINGS.portfolioDetails.meta.asOf}{" "}{details.asOfDate}
+              {/*{STRINGS.portfolioDetails.meta.asOf}{" "}{details.asOfDate}*/} //TODO: check if there is a date
             </p>
           </div>
 
@@ -303,23 +303,23 @@ export function PortfolioDetailsClient({
                         }}
                         tabIndex={0}
                         role="button"
-                        aria-label={`Select ${position.instrumentName}`}
+                        aria-label={`Select ${position.instrument.instrumentName}`}
                         className={`cursor-pointer ${
                           isSelected ? "bg-[#2660a6]/5" : "hover:bg-gray-50"
                         }`}
                       >
                         <td className="px-4 py-3">
                           <span className="font-semibold text-[#2660a6]">
-                            {position.instrumentName}
+                            {position.instrument.instrumentName}
                           </span>
                           <p className="mt-0.5 text-xs text-gray-400">
-                            {position.sector ?? STRINGS.portfolioDetails.fallback.unknown}
+                            {position.instrument.sector ?? STRINGS.portfolioDetails.fallback.unknown}
                           </p>
                         </td>
                         <td className="px-4 py-3 font-mono text-xs text-gray-500">
-                          {position.instrumentIsin}
+                          {position.instrument.instrumentIsin}
                         </td>
-                        <td className="px-4 py-3 text-gray-700">{position.assetClass}</td>
+                        <td className="px-4 py-3 text-gray-700">{position.instrument.assetClassId}</td>
                         <td className="px-4 py-3 text-right tabular-nums text-gray-700">
                           {formatDecimal(position.weightPct, 2)}%
                         </td>
@@ -355,7 +355,7 @@ export function PortfolioDetailsClient({
                   {STRINGS.portfolioDetails.details.selectedPosition}
                 </p>
                 <h3 className="mt-1 text-lg font-bold text-gray-900">
-                  {selectedPosition.instrumentName}
+                  {selectedPosition.instrument.instrumentName}
                 </h3>
               </div>
 
@@ -363,24 +363,24 @@ export function PortfolioDetailsClient({
               <div className="grid gap-3 sm:grid-cols-2">
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.isin}
-                  value={selectedPosition.instrumentIsin}
+                  value={selectedPosition.instrument.instrumentIsin}
                   className="sm:col-span-2"
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.issuer}
-                  value={selectedPosition.issuer}
+                  value={selectedPosition.instrument.issuer ?? STRINGS.portfolioDetails.fallback.unknown}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.assetClass}
-                  value={selectedPosition.assetClass}
+                  value={String(selectedPosition.instrument.assetClassId)}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.sector}
-                  value={selectedPosition.sector ?? STRINGS.portfolioDetails.fallback.unknown}
+                  value={selectedPosition.instrument.sector ?? STRINGS.portfolioDetails.fallback.unknown}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.currency}
-                  value={selectedPosition.currency}
+                  value={selectedPosition.instrument.currency}
                 />
               </div>
 
@@ -391,7 +391,7 @@ export function PortfolioDetailsClient({
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.marketPrice}
-                  value={formatPrice(selectedPosition.marketPrice, selectedPosition.currency)}
+                  value={formatPrice(selectedPosition.marketPrice, selectedPosition.instrument.currency)}
                 />
                 <DetailRow
                   label={STRINGS.portfolioDetails.labels.marketValue}
@@ -408,7 +408,7 @@ export function PortfolioDetailsClient({
                   {STRINGS.portfolioDetails.details.snapshotTitle}
                 </p>
                 <p className="mt-1">
-                  {selectedPosition.instrumentName} is the currently selected instrument.
+                  {selectedPosition.instrument.instrumentName} is the currently selected instrument.
                   {" "}
                   {STRINGS.portfolioDetails.details.snapshotText}
                 </p>

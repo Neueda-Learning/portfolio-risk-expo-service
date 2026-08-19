@@ -20,6 +20,49 @@ export interface Portfolio {
   isActive: boolean;
 }
 
+// ─── Instrument ───────────────────────────────────────────────────────────────
+
+export interface Instrument {
+  instrumentId: number;
+  instrumentIsin: string;
+  instrumentName: string;
+  assetClassId: number;
+  currency: string;
+  issueDate?: string;
+  maturityDate?: string;
+  issuer?: string;
+  sector?: string | null;
+  isActive: boolean;
+  createdAt?: string;
+}
+
+// ─── Portfolio Position ────────────────────────────────────────────────────────
+
+export interface Position {
+  positionId: number;
+  portfolioId: number;
+  instrumentId: number;
+  positionDate: string;
+  quantity: number;
+  marketPrice: number;
+  marketValue: number;
+  marketValueBase: number;
+  weightPct: number;
+  costBasis?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PortfolioPositionWithInstrument extends Position {
+  instrument: Instrument;
+}
+
+// ─── Portfolio Details ────────────────────────────────────────────────────────
+
+export interface PortfolioDetails extends Portfolio {
+  positions: PortfolioPositionWithInstrument[];
+}
+
 // ─── Exposure ─────────────────────────────────────────────────────────────────
 
 export interface PortfolioExposure {
