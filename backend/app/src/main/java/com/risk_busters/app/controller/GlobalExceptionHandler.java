@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         response.put("instrumentId", ex.getInstrumentId() != null ? ex.getInstrumentId() : "unknown");
         response.put("availableDays", ex.getAvailableDays());
         response.put("requiredDays", ex.getRequiredDays());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
     }
 
     @ExceptionHandler(SnapshotPersistenceException.class)

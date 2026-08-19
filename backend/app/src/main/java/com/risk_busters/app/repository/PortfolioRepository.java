@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Repository
 public interface PortfolioRepository extends JpaRepository<Portfolio, Integer> {
@@ -17,8 +16,4 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Integer> {
     @Query(value = "CALL store_snapshot(:portfolioId, :snapshotDate)", nativeQuery = true)
     void storeSnapshot(@Param("portfolioId") Integer portfolioId,
                        @Param("snapshotDate") LocalDate snapshotDate);
-
-    @Query("SELECT p FROM Portfolio p LEFT JOIN FETCH p.positions LEFT JOIN FETCH p.limits WHERE p.portfolioId = :portfolioId")
-    Optional<Portfolio> findByIdWithRelations(@Param("portfolioId") Integer portfolioId);
 }
-
