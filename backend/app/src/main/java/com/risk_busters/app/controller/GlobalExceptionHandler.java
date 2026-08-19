@@ -25,24 +25,6 @@ public class GlobalExceptionHandler {
         ));
     }
 
-    @ExceptionHandler(PortfolioNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handlePortfolioNotFound(PortfolioNotFoundException ex) {
-        log.warn("Portfolio not found: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(buildErrorResponse(
-                "Portfolio Not Found",
-                ex.getMessage()
-        ));
-    }
-
-    @ExceptionHandler(InvalidRequestException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidRequest(InvalidRequestException ex) {
-        log.warn("Invalid request: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(buildErrorResponse(
-                "Bad Request",
-                ex.getMessage()
-        ));
-    }
-
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         log.warn("Illegal argument: {}", ex.getMessage());
@@ -50,20 +32,6 @@ public class GlobalExceptionHandler {
                 "Bad Request",
                 ex.getMessage()
         ));
-    }
-
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(ValidationException ex) {
-        log.warn("Validation failed: {}", ex.getMessage());
-        Map<String, Object> response = buildErrorResponse(
-                "Validation Failed",
-                ex.getMessage()
-        );
-        if (ex.getFieldName() != null) {
-            response.put("fieldName", ex.getFieldName());
-            response.put("rejectedValue", ex.getRejectedValue());
-        }
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
 
     @ExceptionHandler(InsufficientPriceHistoryException.class)
@@ -91,30 +59,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
-    @ExceptionHandler(ConflictException.class)
-    public ResponseEntity<Map<String, Object>> handleConflict(ConflictException ex) {
-        log.warn("Conflict detected: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(
-                "Conflict",
-                ex.getMessage()
-        ));
-    }
-
     @ExceptionHandler(UnexpectedRollbackException.class)
     public ResponseEntity<Map<String, Object>> handleUnexpectedRollback(UnexpectedRollbackException ex) {
         log.error("Transaction rollback occurred", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(buildErrorResponse(
                 "Transaction Conflict",
                 "The operation could not be completed because an internal sub-operation failed and caused the transaction to roll back."
-        ));
-    }
-
-    @ExceptionHandler(ServiceException.class)
-    public ResponseEntity<Map<String, Object>> handleServiceException(ServiceException ex) {
-        log.error("Service error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(buildErrorResponse(
-                "Service Error",
-                ex.getMessage()
         ));
     }
 
