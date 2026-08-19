@@ -1,9 +1,6 @@
 package com.risk_busters.app.service;
 
-import com.risk_busters.app.dto.AcknowledgeLimitRequestDTO;
-import com.risk_busters.app.dto.AcknowledgeLimitResponseDTO;
-import com.risk_busters.app.dto.LimitBreachResponseDTO;
-import com.risk_busters.app.dto.LimitDetailDTO;
+import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitBreach;
@@ -24,22 +21,42 @@ import java.util.List;
 public class LimitService {
     private final LimitBreachRepository limitBreachRepository;
 
-    public LimitBreachResponseDTO getLimitBreachesByStatus(LimitBreachStatus status) {
+    public List<LimitBreachDTO> getLimitBreachesByStatus(LimitBreachStatus status) {
         log.info("Limit breaches lookup started: status={}", status);
 
-        List<LimitDetailDTO> mappedLimits = limitBreachRepository.findByStatus(status).stream()
-                .map(this::toLimitDetailDto)//todo toLimitDetailDTO should go as its own mapper
+        //This maps breaches to Limits, not breaches themselves - might be used somewhere else
+//        List<LimitDetailDTO> mappedLimits = limitBreachRepository.findByStatus(status).stream()
+//                .map(this::toLimitDetailDto)//todo toLimitDetailDTO should go as its own mapper
+//                .toList();
+
+        List<LimitBreachDTO> limitBreaches = limitBreachRepository.findByStatus(status).stream()
+                .map(this::toLimitBreachDto)
                 .toList();
 
-        if (mappedLimits.isEmpty()) {
+        if (limitBreaches.isEmpty()) {
             log.warn("No limit breaches found: status={}", status);
         } else {
-            log.info("Limit breaches lookup completed: status={} count={}", status, mappedLimits.size());
+            log.info("Limit breaches lookup completed: status={} count={}", status, limitBreaches.size());
         }
 
-        return LimitBreachResponseDTO.builder()
-                .status(status)
-                .limits(mappedLimits)
+        return limitBreaches;
+    }
+
+    private LimitBreachDTO toLimitBreachDto(LimitBreach limitBreach) {
+        return LimitBreachDTO.builder()
+                .breachId(limitBreach.getBreachId())
+                .limitId(limitBreach.getLimit().getLimitId())
+                .portfolioId(limitBreach.getPortfolio().getPortfolioId())
+                .portfolioName(limitBreach.getPortfolio().getPortfolioName())
+                .breachDate(limitBreach.getBreachDate())
+                .limitValue(limitBreach.getLimitValue())
+                .actualValue(limitBreach.getActualValue())
+                .excessAmount(limitBreach.getExcessAmount())
+                .severity(limitBreach.getSeverity())
+                .acknowledgedBy(limitBreach.getAcknowledgedBy())
+                .acknowledgedAt(limitBreach.getAcknowledgedAt())
+                .resolution(limitBreach.getResolution())
+                .status(limitBreach.getStatus())
                 .build();
     }
 
