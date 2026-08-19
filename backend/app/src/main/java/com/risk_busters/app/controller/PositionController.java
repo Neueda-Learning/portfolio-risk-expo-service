@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/portfolios/{portfolioId}/positions")
 @RequiredArgsConstructor
@@ -14,6 +16,12 @@ public class PositionController {
 
     private final PositionService positionService;
 
+    @GetMapping
+    public ResponseEntity<List<PositionResponseDTO>> getPosition(@PathVariable Integer portfolioId) {
+        log.info("Positions retrieval request: portfolioId={}", portfolioId);
+        List<PositionResponseDTO> position = positionService.getAllPositionsByIdFromPortfolio(portfolioId);
+        return ResponseEntity.ok(position);
+    }
     /**
      * GET /api/portfolios/{portfolioId}/positions/{positionId}
      * Retrieve a specific position from a portfolio

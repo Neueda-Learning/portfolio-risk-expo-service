@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -48,5 +50,33 @@ public class PositionService {
                 .createdAt(position.getCreatedAt())
                 .updatedAt(position.getUpdatedAt())
                 .build();
+    }
+
+    public List<PositionResponseDTO> getAllPositionsByIdFromPortfolio(Integer portfolioId) {
+        log.debug("Retrieving all position for portfolioId={} ", portfolioId);
+        List<Position> positions = positionRepository.findAllByPortfolioPortfolioId(portfolioId);
+
+        if (positions.isEmpty()) {
+            log.error("No positions found for portfolioId={}", portfolioId);
+            throw new ResourceNotFoundException("No positions found for portfolio with id: " + portfolioId);
+        }
+
+        return positions.stream()
+                .map(position -> PositionResponseDTO.builder()
+                        .portfolioId(position.getPortfolio().getPortfolioId())
+                        .positionId(position.getPositionId())
+                        .instrumentId(position.getInstrument().getInstrumentId())
+                        .instrumentName(position.getInstrument().getInstrumentName())
+                        .quantity(position.getQuantity())
+                        .marketPrice(position.getMarketPrice())
+                        .marketValue(position.getMarketValue())
+                        .marketValueBase(position.getMarketValueBase())
+                        .weightPct(position.getWeightPct())
+                        .costBasis(position.getCostBasis())
+                        .positionDate(position.getPositionDate())
+                        .createdAt(position.getCreatedAt())
+                        .updatedAt(position.getUpdatedAt())
+                        .build())
+                .toList();
     }
 }
