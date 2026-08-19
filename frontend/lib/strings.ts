@@ -1,0 +1,100 @@
+export const STRINGS = {
+  app: {
+    title: "Portfolio Risk & Exposure",
+    description: "Portfolio Risk & Exposure Service - Risk Busters",
+    brand: "Risk & Exposure",
+    searchPortfoliosPlaceholder: "Search portfolios…",
+    notificationsAriaLabel: "Notifications",
+  },
+  dashboard: {
+    title: "Portfolio Overview",
+    activePortfolioSingular: "active portfolio",
+    activePortfolioPlural: "active portfolios",
+    openBreachSingular: "open breach",
+    openBreachPlural: "open breaches",
+  },
+  alerts: {
+    title: "Open Alerts",
+    none: "No open breaches - all clear.",
+    viewAll: "View All Breaches",
+    view: "View",
+    excess: "Excess",
+  },
+  portfolioTypes: {
+    equity: "Equity",
+    fixedIncome: "Fixed Income",
+    multiAsset: "Multi-Asset",
+    hedge: "Hedge",
+    moneyMarket: "Money Market",
+  },
+  portfolioCard: {
+    aum: "AUM",
+    currency: "Currency",
+    breachesSingular: "breach",
+    breachesPlural: "breaches",
+  },
+  portfolioDetails: {
+    title: "Portfolio details",
+    backToOverview: "Back to overview",
+    meta: {
+      managedBy: "Managed by",
+      asOf: "As of",
+    },
+    stats: {
+      aum: "AUM",
+      baseCurrency: "Base currency",
+      positionsCount: "Positions",
+      benchmark: "Benchmark",
+    },
+    positions: {
+      title: "Positions",
+      searchPlaceholder: "Search positions...",
+      showing: "Showing",
+      of: "of",
+      suffix: "positions",
+      empty: "No positions match your search.",
+    },
+    details: {
+      tabTitle: "Instrument details",
+      selectedPosition: "Selected position",
+      snapshotTitle: "Position snapshot",
+      snapshotText:
+        "The real instrument details view can replace this mock tab later.",
+    },
+    labels: {
+      instrumentId: "Instrument ID",
+      isin: "ISIN",
+      issuer: "Issuer",
+      assetClass: "Asset class",
+      sector: "Sector",
+      currency: "Currency",
+      quantity: "Quantity",
+      marketPrice: "Market price",
+      marketValue: "Market value",
+      weight: "Weight",
+    },
+    table: {
+      instrument: "Instrument",
+      isin: "ISIN",
+      assetClass: "Asset class",
+      weight: "Weight",
+      marketValue: "Market value",
+    },
+    fallback: {
+      unknown: "—",
+    },
+  },
+  errors: {
+    backendUnreachableTitle: "Backend Unreachable",
+    dataUnavailableTitle: "Data Unavailable",
+    backendUnreachableMessage:
+      "The portfolio service at 127.0.0.1:8080 could not be reached.",
+    dataUnavailableMessage: "An error occurred while loading portfolio data.",
+    tryAgain: "Try again",
+  },
+  api: {
+    backendUnreachablePrefix: "Could not reach the backend at",
+    backendReturnedPrefix: "Backend returned",
+    backendRunningQuestion: "Is the server running?",
+  },
+} as const;
