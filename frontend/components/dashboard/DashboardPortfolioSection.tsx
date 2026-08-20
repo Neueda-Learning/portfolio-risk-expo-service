@@ -1,21 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
-import { AlertTriangle, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { PortfolioCard } from "@/components/dashboard/PortfolioCard";
-import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
 import type { Portfolio } from "@/types";
 
 export function DashboardPortfolioSection({
   portfolios,
   breachCountByPortfolio,
-  openBreachesCount,
 }: {
   portfolios: Portfolio[];
   breachCountByPortfolio: Record<number, number>;
-  openBreachesCount: number;
 }) {
   const [search, setSearch] = useState("");
 
