@@ -66,7 +66,7 @@ class PositionServiceTest {
         InstrumentDTO result = service.getInstrumentInPortfolioByPositionId(10, 55);
 
         Assertions.assertEquals(200, result.getInstrumentId());
-        Assertions.assertEquals("US0000000200", result.getInstrumentIsIn());
+        Assertions.assertEquals("US0000000200", result.getInstrumentIsin());
         Assertions.assertEquals("Treasury Bond 2030", result.getInstrumentName());
         Assertions.assertEquals("USD", result.getCurrency());
         Assertions.assertEquals("Fixed Income", result.getAssetClass());
