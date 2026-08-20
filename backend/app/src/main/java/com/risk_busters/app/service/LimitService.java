@@ -114,8 +114,7 @@ public class LimitService {
                 .status(breach.getStatus().name())
                 .effectiveFrom(limit.getEffectiveFrom())
                 .effectiveTo(limit.getEffectiveTo())
-                .isBreached(breach.getStatus() != LimitBreachStatus.RESOLVED
-                        && breach.getStatus() != LimitBreachStatus.WAIVED)
+                .isBreached(limit.getStatus() == LimitStatus.BREACH)
                 .build();
     }
 
@@ -182,11 +181,11 @@ public class LimitService {
                     });
 
             LimitStatus previousStatus = limit.getStatus();
-            limit.setStatus(LimitStatus.OK);
+            limit.setStatus(LimitStatus.SUSPENDED);
             limitRepository.save(limit);
 
-            log.info("Limit status updated to OK: limitId={} previousStatus={} newStatus={}", 
-                    limitId, previousStatus, LimitStatus.OK);
+            log.info("Limit status updated to SUSPENDED (ACKNOWLEDGED ALL BREACHES): limitId={} previousStatus={} newStatus={}",
+                    limitId, previousStatus, LimitStatus.SUSPENDED);
         }
     }
 }
