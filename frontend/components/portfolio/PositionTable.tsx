@@ -126,10 +126,10 @@ export function PositionTable({
                       {position.instrument.assetClass ??
                         STRINGS.portfolioOverview.fallback.unknown}
                     </td>
-                    <td className="px-4 py-3 text-right tabular-nums text-gray-700">
+                    <td className="px-4 py-3 text-xs tabular-nums text-gray-700">
                       {formatDecimal(position.weightPct, 2)}%
                     </td>
-                    <td className="px-4 py-3 text-right tabular-nums text-gray-700">
+                    <td className="px-4 py-3 text-xst tabular-nums text-gray-700">
                       {formatCurrency(position.marketValueBase, baseCurrency)}
                     </td>
                   </tr>
