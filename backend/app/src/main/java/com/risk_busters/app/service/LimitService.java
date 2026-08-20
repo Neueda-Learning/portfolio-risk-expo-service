@@ -80,9 +80,6 @@ public class LimitService {
 
         // Update breach record
         LimitBreach saved = updateBreachStatus(breach, request);
-        
-        // Check if there are any remaining OPEN breaches for this limit; if not, update limit status to OK
-        updateLimitStatusIfNoOpenBreaches(limitId);
 
         //todo  eventualy move to its own mapper
         log.info("Limit breach acknowledged: limitId={} acknowledgedBy={} status={} resolution={}",
@@ -143,8 +140,7 @@ public class LimitService {
         LimitBreach saved = updateBreachStatus(breach, request);
         Integer limitId = saved.getLimit().getLimitId();
 
-        // Check if there are any remaining OPEN breaches for this limit; if not, update limit status to OK
-        updateLimitStatusIfNoOpenBreaches(limitId);
+
 
         log.info("Limit breach acknowledged: breachId={} limitId={} acknowledgedBy={} status={} resolution={}",
                 breachId,
@@ -169,7 +165,7 @@ public class LimitService {
         breach.setStatus(LimitBreachStatus.ACKNOWLEDGED);
         return limitBreachRepository.save(breach);
     }
-
+    //NO USE
     private void updateLimitStatusIfNoOpenBreaches(Integer limitId) {
         // Check if any OPEN breaches exist for this limit
         if (!limitBreachRepository.existsByLimitLimitIdAndStatus(limitId, LimitBreachStatus.OPEN)) {
