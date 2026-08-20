@@ -1,4 +1,5 @@
 package com.risk_busters.app.controller;
+import com.risk_busters.app.dto.InstrumentDTO;
 import com.risk_busters.app.dto.PositionResponseDTO;
 import com.risk_busters.app.service.PositionService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,12 @@ public class PositionController {
         log.info("Position retrieval request: portfolioId={} positionId={}", portfolioId, positionId);
         PositionResponseDTO position = positionService.getPositionByIdFromPortfolio(portfolioId, positionId);
         return ResponseEntity.ok(position);
+    }
+    @GetMapping("/{positionId}/instrument")
+    public ResponseEntity<InstrumentDTO> getInstrumentByPosition(@PathVariable Integer portfolioId, @PathVariable Integer positionId) {
+        log.info("Instrument retrieval request: portfolioId={} positionId={}", portfolioId, positionId);
+        InstrumentDTO instrument = positionService.getInstrumentInPortfolioByPositionId(portfolioId, positionId);
+        return ResponseEntity.ok(instrument);
     }
 
 }
