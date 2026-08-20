@@ -27,15 +27,15 @@ export function BreachRow({ breach }: { breach: LimitBreach }) {
           <span className="font-semibold text-[#db0011]">
             {formatCurrency(breach.excessAmount, "GBP")}
           </span>{" "}
-          · {breach.breachDate}
+           | {breach.breachDate}
         </p>
         {breach.limitType && (
           <p className="text-xs text-gray-400">{breach.limitType}</p>
         )}
       </div>
       <Link
-        href={`${CONSTANTS.routes.breaches}?portfolioId=${breach.portfolioId}`}
-        className="shrink-0 text-xs text-[#2660a6] hover:underline"
+          href={`${CONSTANTS.routes.home}portfolios/${breach.portfolioId}`}
+          className="shrink-0 text-xs text-[#2660a6] hover:underline"
       >
         {STRINGS.alerts.view}
       </Link>
