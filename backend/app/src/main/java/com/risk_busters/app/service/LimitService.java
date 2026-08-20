@@ -66,12 +66,12 @@ public class LimitService {
     }
 
     @Transactional
-    public AcknowledgeLimitResponseDTO acknowledgeLimitBreach(Integer limitId, AcknowledgeLimitRequestDTO request) {
+    public AcknowledgeLimitResponseDTO acknowledgeLatestLimitBreachInLimit(Integer limitId, AcknowledgeLimitRequestDTO request) {
         log.info("Limit breach acknowledgement started: limitId={} acknowledgedBy={}", limitId, request.getAcknowledgedBy());
 
         // Find the most recent open breach for this limit
         LimitBreach breach = limitBreachRepository
-                .findFirstByLimitLimitIdOrderByBreachDateDesc(limitId)
+                .findFirstByLimitLimitIdAndStatusOrderByBreachDateDesc(limitId, LimitBreachStatus.OPEN)
                 .orElseThrow(() -> {
                     log.error("Limit breach acknowledgement failed: limitId={} reason=No limit breach found", limitId);
                     return new ResourceNotFoundException("No limit breach found for limit ID: " + limitId);

@@ -37,11 +37,11 @@ public class LimitController {
         return ResponseEntity.ok(breaches);
     }
 
-    @PatchMapping("/breaches/{id}/acknowledge")
+    @PatchMapping("{id}/breaches/acknowledgeLatest")
     public ResponseEntity<AcknowledgeLimitResponseDTO> acknowledgeLimitResponse(
             @PathVariable Integer id,
             @RequestBody AcknowledgeLimitRequestDTO request) {
-        AcknowledgeLimitResponseDTO acknowledgment = limitService.acknowledgeLimitBreach(id, request);
+        AcknowledgeLimitResponseDTO acknowledgment = limitService.acknowledgeLatestLimitBreachInLimit(id, request);
         return ResponseEntity.ok(acknowledgment);
     }
 
