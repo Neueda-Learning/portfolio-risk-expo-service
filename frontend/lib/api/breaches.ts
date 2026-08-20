@@ -1,5 +1,5 @@
 import type { LimitBreach } from "@/types";
-import { apiFetch } from "./client";
+import { apiFetch } from "./fetch";
 import {CONSTANTS} from "@/lib/constants";
 
 export async function getOpenBreaches(): Promise<LimitBreach[]> {

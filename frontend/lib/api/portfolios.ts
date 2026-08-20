@@ -1,4 +1,5 @@
 import type {
+  Instrument,
   Portfolio,
   PortfolioAssetExposure,
   PortfolioExposure,
@@ -8,20 +9,20 @@ import type {
   PortfolioStatsData,
   PortfolioVar,
 } from "@/types";
-import { apiFetch } from "./client";
+import { apiFetch } from "./fetch";
 import {CONSTANTS} from "@/lib/constants";
 
 export async function getPortfolios(): Promise<Portfolio[]> {
   return apiFetch<Portfolio[]>(CONSTANTS.routes.portfolios);
 }
 
-export async function getPortfolioId(
+export async function getPortfolio(
     portfolioId: number
 ): Promise<Portfolio> {
   return apiFetch<Portfolio>(`${CONSTANTS.routes.portfolios}/${portfolioId}`);
 }
 
-export async function getPositionsFromPortfolioId(
+export async function getPositionsFromPortfolio(
     portfolioId: number,
 ): Promise<PortfolioPositionRow[]> {
   return apiFetch<PortfolioPositionRow[]>(`${CONSTANTS.routes.portfolios}/${portfolioId}/positions`);
@@ -93,4 +94,11 @@ export async function getPortfolioStats(
     sectorExposure: sectorResult.value,
     assetExposure: assetResult.value,
   };
+}
+
+export async function getInstrumentFromPosition(
+    portfolioId: number,
+    positionId: number
+): Promise<Instrument> {
+  return apiFetch<Instrument>(`${CONSTANTS.routes.portfolios}/${portfolioId}/positions/${positionId}/instrument`);
 }

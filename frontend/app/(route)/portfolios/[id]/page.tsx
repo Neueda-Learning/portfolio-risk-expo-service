@@ -1,12 +1,16 @@
 import { notFound } from "next/navigation";
 import {
-  getPortfolioId,
+  getInstrumentFromPosition,
+  getPortfolio,
   getPortfolioStats,
-  getPositionsFromPortfolioId,
+  getPositionsFromPortfolio,
 } from "@/lib/api/portfolios";
 import type { PortfolioOverview, PortfolioPositionRow } from "@/types";
 import { PortfolioOverviewPage } from "@/components/portfolio/PortfolioOverviewPage";
 
+function isNotFoundError(error: unknown): boolean {
+  return error instanceof Error && error.message.includes(" 404 ");
+}
 
 export default async function PortfolioDetailsPage({
   params,
@@ -20,31 +24,38 @@ export default async function PortfolioDetailsPage({
     notFound();
   }
 
-  const [portfolio, positions, stats] = await Promise.all([
-    getPortfolioId(portfolioId),
-    getPositionsFromPortfolioId(portfolioId),
-    getPortfolioStats(portfolioId),
+  const [portfolio, stats] = await Promise.all([
+    getPortfolio(portfolioId),
+   getPortfolioStats(portfolioId),
   ]);
+
+  let positions: PortfolioPositionRow[] = [];
+
+  try {
+   positions = await getPositionsFromPortfolio(portfolioId);
+  } catch (error) {
+   if (!isNotFoundError(error)) {
+     throw error;
+   }
+  }
+
+  const positionsWithInstrument = await Promise.all(
+   positions.map(async (position: PortfolioPositionRow) => {
+     const instrument = await getInstrumentFromPosition(
+       portfolioId,
+       position.positionId
+     );
+
+     return {
+       ...position,
+       instrument: instrument,
+     };
+   })
+  );
+
   const details: PortfolioOverview = {
-    ...portfolio,
-    positions: positions.map((position: PortfolioPositionRow) => ({
-      positionId: position.positionId,
-      portfolioId: position.portfolioId,
-      instrumentId: position.instrumentId,
-      positionDate: position.positionDate,
-      quantity: position.quantity,
-      marketPrice: position.marketPrice,
-      marketValue: position.marketValue,
-      marketValueBase: position.marketValueBase,
-      weightPct: position.weightPct,
-      costBasis: position.costBasis,
-      createdAt: position.createdAt,
-      updatedAt: position.updatedAt,
-      instrument: {
-        instrumentId: position.instrumentId,
-        instrumentName: position.instrumentName,
-      },
-    })),
+   ...portfolio,
+   positions: positionsWithInstrument,
   };
 
   return <PortfolioOverviewPage details={details} stats={stats} />;
