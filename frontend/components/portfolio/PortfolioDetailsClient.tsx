@@ -181,8 +181,7 @@ export function PortfolioDetailsClient({
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               {details.portfolioCode} <br/>
-              {STRINGS.portfolioDetails.meta.managedBy}{" "}{details.manager} <br/>
-              {/*{STRINGS.portfolioDetails.meta.asOf}{" "}{details.asOfDate}*/} //TODO: check if there is a date
+              {STRINGS.portfolioDetails.managedBy}{" "}{details.manager} <br/>
             </p>
           </div>
 

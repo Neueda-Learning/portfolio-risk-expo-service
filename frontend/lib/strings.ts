@@ -36,10 +36,7 @@ export const STRINGS = {
   portfolioDetails: {
     title: "Portfolio details",
     backToOverview: "Back to overview",
-    meta: {
-      managedBy: "Managed by",
-      asOf: "As of",
-    },
+    managedBy: "Managed by",
     stats: {
       aum: "AUM",
       baseCurrency: "Base currency",
