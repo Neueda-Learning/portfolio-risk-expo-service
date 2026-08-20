@@ -1,20 +1,18 @@
 export const STRINGS = {
   app: {
-    title: "Portfolio Risk & Exposure",
-    description: "Portfolio Risk & Exposure Service - Risk Busters",
-    brand: "Risk & Exposure",
-    searchPortfoliosPlaceholder: "Search portfolios…",
-    notificationsAriaLabel: "Notifications",
+    title: "Portfolio Risk & Exposure Service",
+    description: "Service for calculating risk and exposure of investment portfolios.",
   },
   dashboard: {
-    title: "Portfolios dashboard",
+    title: "Dashboard",
     activePortfolioSingular: "active portfolio",
     activePortfolioPlural: "active portfolios",
+    searchPlaceholder: "Search portfolios...",
     openBreachSingular: "open breach",
     openBreachPlural: "open breaches",
   },
   alerts: {
-    title: "Open Alerts",
+    title: "Alerts",
     none: "No open breaches - all clear.",
     viewAll: "View All Breaches",
     view: "View",
@@ -30,12 +28,12 @@ export const STRINGS = {
   portfolioCard: {
     aum: "AUM",
     currency: "Currency",
-    breachesSingular: "breach",
-    breachesPlural: "breaches",
+    breachesSingular: "Breach",
+    breachesPlural: "Breaches",
   },
   portfolioOverview: {
     title: "Portfolio overview",
-    backToOverview: "Back to portfolios dashboard",
+    backToOverview: "Back to dashboard",
     managedBy: "Managed by",
     details: {
       aum: "AUM",
