@@ -25,4 +25,7 @@ public interface LimitBreachRepository extends JpaRepository<LimitBreach, Intege
     Integer findMaxBreachId();
 
     boolean existsByLimitLimitIdAndBreachDate(Integer limitId, LocalDate breachDate);
+
+    @Query("SELECT COUNT(lb) > 0 FROM LimitBreach lb WHERE lb.limit.limitId = :limitId AND lb.status = :status")
+    boolean existsByLimitLimitIdAndStatus(@Param("limitId") Integer limitId, @Param("status") LimitBreachStatus status);
 }
