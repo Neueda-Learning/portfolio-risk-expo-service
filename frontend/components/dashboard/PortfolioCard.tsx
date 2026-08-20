@@ -3,6 +3,8 @@ import { AlertTriangle, ChevronRight, Users } from "lucide-react";
 import { PortfolioTypeBadge } from "@/components/ui/PortfolioTypeBadge";
 import { MetricCell } from "@/components/ui/MetricCell";
 import { formatCurrency } from "@/lib/format";
+import { CONSTANTS } from "@/lib/constants";
+import { STRINGS } from "@/lib/strings";
 import type { Portfolio } from "@/types";
 
 export function PortfolioCard({
@@ -14,7 +16,7 @@ export function PortfolioCard({
 }) {
   return (
     <Link
-      href={`/portfolios/${portfolio.portfolioId}`}
+      href={`${CONSTANTS.routes.home}portfolios/${portfolio.portfolioId}`}
       className="group flex flex-col rounded-lg border border-[#e5e7eb] bg-white shadow-sm transition hover:shadow-md hover:border-[#2660a6]/40"
     >
       {/* Card header */}
@@ -33,10 +35,10 @@ export function PortfolioCard({
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-px border-t border-[#e5e7eb] bg-[#e5e7eb]">
         <MetricCell
-          label="AUM"
+          label={STRINGS.portfolioCard.aum}
           value={formatCurrency(portfolio.aum, portfolio.baseCurrency)}
         />
-        <MetricCell label="Currency" value={portfolio.baseCurrency} />
+        <MetricCell label={STRINGS.portfolioCard.currency} value={portfolio.baseCurrency} />
       </div>
 
       {/* Footer */}
@@ -49,7 +51,10 @@ export function PortfolioCard({
           {openBreachCount > 0 && (
             <span className="flex items-center gap-1 rounded-full bg-[#db0011]/10 px-2 py-0.5 text-xs font-semibold text-[#db0011]">
               <AlertTriangle className="h-3 w-3" aria-hidden="true" />
-              {openBreachCount} breach{openBreachCount > 1 ? "es" : ""}
+              {openBreachCount}{" "}
+              {openBreachCount === 1
+                ? STRINGS.portfolioCard.breachesSingular
+                : STRINGS.portfolioCard.breachesPlural}
             </span>
           )}
           <ChevronRight className="h-4 w-4 text-gray-300 group-hover:text-[#2660a6]" />

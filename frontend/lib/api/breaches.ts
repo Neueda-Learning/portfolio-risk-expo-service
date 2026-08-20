@@ -1,8 +1,9 @@
 import type { LimitBreach } from "@/types";
-import { apiFetch } from "./client";
+import { apiFetch } from "./fetch";
+import {CONSTANTS} from "@/lib/constants";
 
 export async function getOpenBreaches(): Promise<LimitBreach[]> {
-  return apiFetch<LimitBreach[]>("/api/limits/breaches?status=OPEN");
+  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breaches}?status=OPEN`);
 }
 
 export async function getBreaches(params?: {
@@ -12,5 +13,5 @@ export async function getBreaches(params?: {
   const qs = new URLSearchParams();
   if (params?.status) qs.set("status", params.status);
   if (params?.portfolioId) qs.set("portfolioId", String(params.portfolioId));
-  return apiFetch<LimitBreach[]>(`/api/limits/breaches?${qs}`);
+  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breaches}?${qs}`);
 }

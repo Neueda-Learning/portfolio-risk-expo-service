@@ -17,3 +17,18 @@ export function formatCurrency(
     maximumFractionDigits: 0,
   }).format(value);
 }
+
+export function formatDecimal(value: number, maximumFractionDigits = 2): string {
+  return new Intl.NumberFormat("en-GB", {
+    maximumFractionDigits,
+  }).format(value);
+}
+
+export function formatPrice(value: number, currency: string): string {
+  return new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  }).format(value);
+}
