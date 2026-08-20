@@ -1,15 +1,22 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { PortfolioDetails, PortfolioPositionWithInstrument } from "@/types";
+import type {
+  PortfolioOverview,
+  PortfolioPositionWithInstrument,
+  PortfolioStatsData,
+} from "@/types";
+import { PortfolioDetails } from "./PortfolioDetails";
 import { PortfolioStats } from "./PortfolioStats";
 import { PositionTable } from "./PositionTable";
 import { PositionDetails } from "./PositionDetails";
 
-export function PortfolioDetailsClient({
+export function PortfolioOverviewPage({
   details,
+  stats,
 }: {
-  details: PortfolioDetails;
+  details: PortfolioOverview;
+  stats: PortfolioStatsData;
 }) {
   const [search, setSearch] = useState("");
   const [selectedPositionId, setSelectedPositionId] = useState(
@@ -88,7 +95,9 @@ export function PortfolioDetailsClient({
 
   return (
     <div className="space-y-6">
-      <PortfolioStats details={details} />
+      <PortfolioDetails details={details} />
+
+      <PortfolioStats stats={stats} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,0.9fr)]">
         <PositionTable

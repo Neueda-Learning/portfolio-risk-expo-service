@@ -32,7 +32,7 @@ export function PositionDetails({
     <aside className="min-w-0 rounded-lg border border-[#e5e7eb] bg-white shadow-sm">
       <div className="px-4 pt-4">
         <div className="inline-flex border-b-2 border-[#2660a6] px-1 pb-2 text-sm font-semibold text-[#2660a6]">
-          {STRINGS.portfolioDetails.details.tabTitle}
+          {STRINGS.portfolioOverview.instrumentDetails.tabTitle}
         </div>
       </div>
 
@@ -40,7 +40,7 @@ export function PositionDetails({
         <div className="space-y-4 p-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-              {STRINGS.portfolioDetails.details.selectedPosition}
+              {STRINGS.portfolioOverview.instrumentDetails.selectedPosition}
             </p>
             <h3 className="mt-1 text-lg font-bold text-gray-900">
               {selectedPosition.instrument.instrumentName}
@@ -49,61 +49,61 @@ export function PositionDetails({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.isin}
+              label={STRINGS.portfolioOverview.labels.isin}
               value={
                 selectedPosition.instrument.instrumentIsin ??
-                STRINGS.portfolioDetails.fallback.unknown
+                STRINGS.portfolioOverview.fallback.unknown
               }
               className="sm:col-span-2"
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.issuer}
+              label={STRINGS.portfolioOverview.labels.issuer}
               value={
                 selectedPosition.instrument.issuer ??
-                STRINGS.portfolioDetails.fallback.unknown
+                STRINGS.portfolioOverview.fallback.unknown
               }
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.assetClass}
+              label={STRINGS.portfolioOverview.labels.assetClass}
               value={
                 selectedPosition.instrument.assetClass ??
-                STRINGS.portfolioDetails.fallback.unknown
+                STRINGS.portfolioOverview.fallback.unknown
               }
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.sector}
+              label={STRINGS.portfolioOverview.labels.sector}
               value={
                 selectedPosition.instrument.sector ??
-                STRINGS.portfolioDetails.fallback.unknown
+                STRINGS.portfolioOverview.fallback.unknown
               }
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.currency}
+              label={STRINGS.portfolioOverview.labels.currency}
               value={selectedPosition.instrument.currency ?? baseCurrency}
             />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.quantity}
+              label={STRINGS.portfolioOverview.labels.quantity}
               value={formatDecimal(selectedPosition.quantity, 0)}
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.marketPrice}
+              label={STRINGS.portfolioOverview.labels.marketPrice}
               value={formatPrice(
                 selectedPosition.marketPrice,
                 selectedPosition.instrument.currency ?? baseCurrency
               )}
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.marketValue}
+              label={STRINGS.portfolioOverview.labels.marketValue}
               value={formatCurrency(
                 selectedPosition.marketValue,
                 baseCurrency
               )}
             />
             <DetailRow
-              label={STRINGS.portfolioDetails.labels.weight}
+              label={STRINGS.portfolioOverview.labels.weight}
               value={`${formatDecimal(selectedPosition.weightPct, 2)}%`}
             />
           </div>

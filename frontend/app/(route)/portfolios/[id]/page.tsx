@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
-import { PortfolioDetailsClient } from "@/components/portfolio/PortfolioDetailsClient";
-import {getPortfolioId, getPositionsFromPortfolioId} from "@/lib/api/portfolios";
-import type { PortfolioDetails, PortfolioPositionApiRow } from "@/types";
+import {
+  getPortfolioId,
+  getPortfolioStats,
+  getPositionsFromPortfolioId,
+} from "@/lib/api/portfolios";
+import type { PortfolioOverview, PortfolioPositionRow } from "@/types";
+import { PortfolioOverviewPage } from "@/components/portfolio/PortfolioOverviewPage";
 
 
 export default async function PortfolioDetailsPage({
@@ -16,11 +20,14 @@ export default async function PortfolioDetailsPage({
     notFound();
   }
 
-  const portfolio = await getPortfolioId(portfolioId);
-  const positions = await getPositionsFromPortfolioId(portfolio.portfolioId);
-  const details: PortfolioDetails = {
+  const [portfolio, positions, stats] = await Promise.all([
+    getPortfolioId(portfolioId),
+    getPositionsFromPortfolioId(portfolioId),
+    getPortfolioStats(portfolioId),
+  ]);
+  const details: PortfolioOverview = {
     ...portfolio,
-    positions: positions.map((position: PortfolioPositionApiRow) => ({
+    positions: positions.map((position: PortfolioPositionRow) => ({
       positionId: position.positionId,
       portfolioId: position.portfolioId,
       instrumentId: position.instrumentId,
@@ -40,5 +47,5 @@ export default async function PortfolioDetailsPage({
     })),
   };
 
-  return <PortfolioDetailsClient details={details} />;
+  return <PortfolioOverviewPage details={details} stats={stats} />;
 }

@@ -7,7 +7,7 @@ export const STRINGS = {
     notificationsAriaLabel: "Notifications",
   },
   dashboard: {
-    title: "Portfolio Overview",
+    title: "Portfolios dashboard",
     activePortfolioSingular: "active portfolio",
     activePortfolioPlural: "active portfolios",
     openBreachSingular: "open breach",
@@ -33,15 +33,33 @@ export const STRINGS = {
     breachesSingular: "breach",
     breachesPlural: "breaches",
   },
-  portfolioDetails: {
-    title: "Portfolio details",
-    backToOverview: "Back to overview",
+  portfolioOverview: {
+    title: "Portfolio overview",
+    backToOverview: "Back to portfolios dashboard",
     managedBy: "Managed by",
-    stats: {
+    details: {
       aum: "AUM",
       baseCurrency: "Base currency",
       positionsCount: "Positions",
       benchmark: "Benchmark",
+    },
+    stats: {
+      title: "Risk snapshot",
+      exposure: "Exposure",
+      var1Day: "1-day VaR",
+      limitsCount: "Limits",
+      limitsTitle: "Limit utilisation",
+      breachedLimits: "Breached limits",
+      bySector: "Exposure by sector",
+      byAsset: "Exposure by asset",
+      sector: "Sector",
+      limitType: "Limit type",
+      currentValue: "Current value",
+      limitValue: "Limit value",
+      utilisation: "Utilisation",
+      status: "Status",
+      share: "Share",
+      empty: "No data available.",
     },
     positions: {
       title: "Positions",
@@ -51,7 +69,7 @@ export const STRINGS = {
       suffix: "positions",
       empty: "No positions match your search.",
     },
-    details: {
+    instrumentDetails: {
       tabTitle: "Instrument details",
       selectedPosition: "Selected position",
     },

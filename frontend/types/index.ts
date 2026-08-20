@@ -54,7 +54,7 @@ export interface Position {
   updatedAt?: string;
 }
 
-export interface PortfolioPositionApiRow extends Position {
+export interface PortfolioPositionRow extends Position {
   instrumentName: string;
 }
 
@@ -64,7 +64,7 @@ export interface PortfolioPositionWithInstrument extends Position {
 
 // ─── Portfolio Details ────────────────────────────────────────────────────────
 
-export interface PortfolioDetails extends Portfolio {
+export interface PortfolioOverview extends Portfolio {
   positions: PortfolioPositionWithInstrument[];
 }
 
@@ -72,6 +72,7 @@ export interface PortfolioDetails extends Portfolio {
 
 export interface PortfolioExposure {
   portfolioId: number;
+  portfolioName: string;
   totalExposure: number;
   currency: string;
   positionCount: number;
@@ -81,9 +82,52 @@ export interface PortfolioExposure {
 
 export interface PortfolioVar {
   portfolioId: number;
+  portfolioName: string;
   confidence: number;
   var1Day: number;
   currency: string;
+}
+
+export interface PortfolioLimitDetail {
+  limitId: number;
+  limitType: string;
+  limitMetric: string;
+  limitValue: number;
+  warningThreshold: number;
+  currentValue: number;
+  utilisationPct: number;
+  status: string;
+  effectiveFrom: string;
+  effectiveTo: string | null;
+  isBreached: boolean;
+}
+
+export interface PortfolioLimitsResponse {
+  portfolioId: number;
+  portfolioName: string;
+  totalExposure: number;
+  baseCurrency: string;
+  limits: PortfolioLimitDetail[];
+}
+
+export interface PortfolioSectorExposure {
+  portfolioId: number;
+  portfolioName: string;
+  sectorExposures: Record<string, number>;
+}
+
+export interface PortfolioAssetExposure {
+  portfolioId: number;
+  portfolioName: string;
+  assetExposures: Record<string, number>;
+}
+
+export interface PortfolioStatsData {
+  exposure: PortfolioExposure;
+  limits: PortfolioLimitsResponse;
+  var: PortfolioVar | null;
+  sectorExposure: PortfolioSectorExposure;
+  assetExposure: PortfolioAssetExposure;
 }
 
 // ─── Limit Breach ─────────────────────────────────────────────────────────────
