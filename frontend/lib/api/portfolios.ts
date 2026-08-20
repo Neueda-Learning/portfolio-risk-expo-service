@@ -1,26 +1,27 @@
 import type {Portfolio, PortfolioExposure, PortfolioPositionApiRow, PortfolioVar} from "@/types";
 import { apiFetch } from "./client";
+import {CONSTANTS} from "@/lib/constants";
 
 export async function getPortfolios(): Promise<Portfolio[]> {
-  return apiFetch<Portfolio[]>("/api/portfolios");
+  return apiFetch<Portfolio[]>(CONSTANTS.routes.portfolios);
 }
 
 export async function getPortfolioId(
     portfolioId: number
 ): Promise<Portfolio> {
-  return apiFetch<Portfolio>(`/api/portfolios/${portfolioId}`);
+  return apiFetch<Portfolio>(`${CONSTANTS.routes.portfolios}/${portfolioId}`);
 }
 
 export async function getPositionsFromPortfolioId(
     portfolioId: number,
 ): Promise<PortfolioPositionApiRow[]> {
-  return apiFetch<PortfolioPositionApiRow[]>(`/api/portfolios/${portfolioId}/positions`);
+  return apiFetch<PortfolioPositionApiRow[]>(`${CONSTANTS.routes.portfolios}/${portfolioId}/positions`);
 }
 
 export async function getPortfolioExposure(
   portfolioId: number
 ): Promise<PortfolioExposure> {
-  return apiFetch<PortfolioExposure>(`/api/portfolios/${portfolioId}/exposure`);
+  return apiFetch<PortfolioExposure>(`${CONSTANTS.routes.portfolios}/${portfolioId}/exposure`);
 }
 
 export async function getPortfolioVar(
@@ -28,6 +29,6 @@ export async function getPortfolioVar(
   confidence: 95 | 99
 ): Promise<PortfolioVar> {
   return apiFetch<PortfolioVar>(
-    `/api/portfolios/${portfolioId}/var?confidence=${confidence}`
+    `${CONSTANTS.routes.portfolios}/${portfolioId}/var?confidence=${confidence}`
   );
 }

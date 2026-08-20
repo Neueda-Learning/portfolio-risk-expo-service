@@ -107,10 +107,3 @@ export interface LimitBreach {
   status: BreachStatus;
   limitType?: string;
 }
-
-// ─── Portfolio with aggregated summary (used for dashboard cards) ─────────────
-
-export interface PortfolioSummary extends Portfolio {
-  exposure?: PortfolioExposure;
-  openBreachCount?: number;
-}
