@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Builder
 public class InstrumentDTO {
     private Integer instrumentId;
-    private String instrumentIsIn;
+    private String instrumentIsin;
     private String instrumentName;
     private String currency;
     private LocalDate issueDate;

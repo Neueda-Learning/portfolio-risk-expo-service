@@ -6,6 +6,7 @@ import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.model.Limit;
 import com.risk_busters.app.model.LimitBreach;
 import com.risk_busters.app.model.LimitBreachStatus;
+import com.risk_busters.app.model.LimitStatus;
 import com.risk_busters.app.repository.LimitBreachRepository;
 import com.risk_busters.app.repository.LimitRepository;
 import lombok.RequiredArgsConstructor;
@@ -66,25 +67,19 @@ public class LimitService {
     }
 
     @Transactional
-    public AcknowledgeLimitResponseDTO acknowledgeLimitBreach(Integer limitId, AcknowledgeLimitRequestDTO request) {
-        log.info("Limit breach acknowledgement started: limitId={} acknowledgedBy={}", limitId, request.getAcknowledgedBy());
+    public AcknowledgeLimitResponseDTO acknowledgeLatestLimitBreachInLimit(Integer limitId, AcknowledgeLimitRequestDTO request) {
+        log.info("Limit breach (latest) acknowledgement started: limitId={} acknowledgedBy={}", limitId, request.getAcknowledgedBy());
 
         // Find the most recent open breach for this limit
         LimitBreach breach = limitBreachRepository
-                .findFirstByLimitLimitIdOrderByBreachDateDesc(limitId)
+                .findFirstByLimitLimitIdAndStatusOrderByBreachDateDesc(limitId, LimitBreachStatus.OPEN)
                 .orElseThrow(() -> {
                     log.error("Limit breach acknowledgement failed: limitId={} reason=No limit breach found", limitId);
                     return new ResourceNotFoundException("No limit breach found for limit ID: " + limitId);
                 });
 
         // Update breach record
-        //todo think about moving it to a function
-        breach.setAcknowledgedBy(request.getAcknowledgedBy());
-        breach.setAcknowledgedAt(LocalDateTime.now());
-        breach.setResolution(request.getResolution());
-        breach.setStatus(LimitBreachStatus.ACKNOWLEDGED);
-        LimitBreach saved = limitBreachRepository.save(breach);
-
+        LimitBreach saved = updateBreachStatus(breach, request);
 
         //todo  eventualy move to its own mapper
         log.info("Limit breach acknowledged: limitId={} acknowledgedBy={} status={} resolution={}",
@@ -116,8 +111,7 @@ public class LimitService {
                 .status(breach.getStatus().name())
                 .effectiveFrom(limit.getEffectiveFrom())
                 .effectiveTo(limit.getEffectiveTo())
-                .isBreached(breach.getStatus() != LimitBreachStatus.RESOLVED
-                        && breach.getStatus() != LimitBreachStatus.WAIVED)
+                .isBreached(limit.getStatus() == LimitStatus.BREACH)
                 .build();
     }
 
@@ -129,5 +123,65 @@ public class LimitService {
             log.warn("No limits found");
         }
         return limits;
+    }
+
+    @Transactional
+    public AcknowledgeLimitResponseDTO acknowledgeLimitBreachById(Integer breachId, AcknowledgeLimitRequestDTO request) {
+        log.info("Limit breach acknowledgement started: breachId={} acknowledgedBy={}", breachId, request.getAcknowledgedBy());
+
+        // Find the breach by ID
+        LimitBreach breach = limitBreachRepository.findById(breachId)
+                .orElseThrow(() -> {
+                    log.error("Limit breach acknowledgement failed: breachId={} reason=No limit breach found", breachId);
+                    return new ResourceNotFoundException("No limit breach found for breach ID: " + breachId);
+                });
+
+        // Update breach record
+        LimitBreach saved = updateBreachStatus(breach, request);
+        Integer limitId = saved.getLimit().getLimitId();
+
+
+
+        log.info("Limit breach acknowledged: breachId={} limitId={} acknowledgedBy={} status={} resolution={}",
+                breachId,
+                limitId,
+                saved.getAcknowledgedBy(),
+                saved.getStatus(),
+                saved.getResolution());
+
+        return AcknowledgeLimitResponseDTO.builder()
+                .limitId(limitId)
+                .acknowledgedBy(saved.getAcknowledgedBy())
+                .acknowledgedAt(saved.getAcknowledgedAt())
+                .resolution(saved.getResolution())
+                .status(saved.getStatus())
+                .build();
+    }
+
+    private LimitBreach updateBreachStatus(LimitBreach breach, AcknowledgeLimitRequestDTO request) {
+        breach.setAcknowledgedBy(request.getAcknowledgedBy());
+        breach.setAcknowledgedAt(LocalDateTime.now());
+        breach.setResolution(request.getResolution());
+        breach.setStatus(LimitBreachStatus.ACKNOWLEDGED);
+        return limitBreachRepository.save(breach);
+    }
+    //NO USE
+    private void updateLimitStatusIfNoOpenBreaches(Integer limitId) {
+        // Check if any OPEN breaches exist for this limit
+        if (!limitBreachRepository.existsByLimitLimitIdAndStatus(limitId, LimitBreachStatus.OPEN)) {
+            // No OPEN breaches found, update limit status to OK
+            Limit limit = limitRepository.findById(limitId)
+                    .orElseThrow(() -> {
+                        log.error("Limit not found: limitId={}", limitId);
+                        return new ResourceNotFoundException("Limit not found for limit ID: " + limitId);
+                    });
+
+            LimitStatus previousStatus = limit.getStatus();
+            limit.setStatus(LimitStatus.SUSPENDED);
+            limitRepository.save(limit);
+
+            log.info("Limit status updated to SUSPENDED (ACKNOWLEDGED ALL BREACHES): limitId={} previousStatus={} newStatus={}",
+                    limitId, previousStatus, LimitStatus.SUSPENDED);
+        }
     }
 }
