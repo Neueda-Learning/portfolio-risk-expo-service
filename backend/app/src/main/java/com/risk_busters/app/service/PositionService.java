@@ -104,7 +104,7 @@ public class PositionService {
 
         return InstrumentDTO.builder()
                 .instrumentId(instrument.getInstrumentId())
-                .instrumentIsIn(instrument.getInstrumentIsin())
+                .instrumentIsin(instrument.getInstrumentIsin())
                 .instrumentName(instrument.getInstrumentName())
                 .currency(instrument.getCurrency())
                 .issueDate(instrument.getIssueDate())
