@@ -1,7 +1,10 @@
 package com.risk_busters.app.service;
+import com.risk_busters.app.dto.InstrumentDTO;
 import com.risk_busters.app.dto.PositionResponseDTO;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
 import com.risk_busters.app.model.Position;
+import com.risk_busters.app.repository.InstrumentRepository;
+import com.risk_busters.app.repository.PortfolioRepository;
 import com.risk_busters.app.repository.PositionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,8 @@ import java.util.List;
 public class PositionService {
 
     private final PositionRepository positionRepository;
+    private final InstrumentRepository instrumentRepository;
+    private final PortfolioRepository portfolioRepository;
 
     /**
      * Get a position by ID and verify it belongs to the specified portfolio
@@ -78,5 +83,38 @@ public class PositionService {
                         .updatedAt(position.getUpdatedAt())
                         .build())
                 .toList();
+    }
+
+    public InstrumentDTO getInstrumentInPortfolioByPositionId(Integer portfolioId, Integer positionId) {
+        log.debug("Retrieving an instrument for portfolioId={} at positionId={}", portfolioId, positionId);
+
+        portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> {
+                    log.error("Portfolio not found: portfolioId={}", portfolioId);
+                    return new ResourceNotFoundException("Portfolio not found with id: " + portfolioId);
+                });
+
+        var instrument = instrumentRepository.findByPositionIdAndPortfolioId(portfolioId, positionId)
+                .orElseThrow(() -> {
+                    log.error("Instrument not found for portfolioId={} positionId={}", portfolioId, positionId);
+                    return new ResourceNotFoundException(
+                            "No instrument found for position " + positionId + " in portfolio " + portfolioId
+                    );
+                });
+
+        return InstrumentDTO.builder()
+                .instrumentId(instrument.getInstrumentId())
+                .instrumentIsIn(instrument.getInstrumentIsin())
+                .instrumentName(instrument.getInstrumentName())
+                .currency(instrument.getCurrency())
+                .issueDate(instrument.getIssueDate())
+                .maturityDate(instrument.getMaturityDate())
+                .issuer(instrument.getIssuer())
+                .sector(instrument.getSector())
+                .assetClass(instrument.getAssetClass().getAssetClassName())
+                .assetClassId(String.valueOf(instrument.getAssetClass().getAssetClassId()))
+                .isActive(instrument.getIsActive())
+                .createdAt(instrument.getCreatedAt())
+                .build();
     }
 }
