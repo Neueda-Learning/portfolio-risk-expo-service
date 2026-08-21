@@ -5,7 +5,7 @@ import { BarChart2 } from "lucide-react";
 import "../globals.css";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
-import { AutoRefresh } from "@/components/common/AutoRefresh";
+import { AutoRefresh } from "@/components/utils/AutoRefresh";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <AutoRefresh everyMs={30000} />
+      {/*<AutoRefresh everyMs={30000} />*/}
       <html lang="en" className={inter.variable}>
       <body className={`${inter.className} min-h-screen bg-[#f4f4f2]`}>
         {/* ── Top Navigation Bar ─────────────────────────────────────── */}

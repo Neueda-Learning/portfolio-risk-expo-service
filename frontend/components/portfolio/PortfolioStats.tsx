@@ -3,7 +3,7 @@
 import { STRINGS } from "@/lib/strings";
 import { formatCurrency, formatDecimal } from "@/lib/format";
 import type { PortfolioStatsData } from "@/types";
-import { PortfolioTable } from "@/components/ui/PortfolioTable";
+import { PortfolioTable } from "@/components/shared/PortfolioTable";
 
 function StatCard({
   label,
@@ -41,7 +41,7 @@ export function PortfolioStats({ stats }: { stats: PortfolioStatsData }) {
   const baseCurrency =
     stats.limits.baseCurrency || stats.exposure.currency;
   const totalExposure = stats.exposure.totalExposure || stats.limits.totalExposure;
-  const breachedLimits = stats.limits.limits.filter((limit) => limit.isBreached).length;
+  const breachedLimits = stats.limits.limits.filter((limit) => limit.status === "BREACH").length;
   const hasBreaches = breachedLimits > 0;
   const sectorEntries = toSortedEntries(stats.sectorExposure.sectorExposures);
   const assetEntries = toSortedEntries(stats.assetExposure.assetExposures);

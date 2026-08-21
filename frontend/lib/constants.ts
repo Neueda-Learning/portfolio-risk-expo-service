@@ -5,7 +5,8 @@ export const CONSTANTS = {
   },
   routes: {
     home: "/",
-    breaches: "/api/limits/breaches",
+    breaches: "/breaches",
+    breachesApi: "/api/limits/breaches",
     portfolios: "/api/portfolios",
   },
 } as const;

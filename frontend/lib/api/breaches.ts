@@ -1,9 +1,14 @@
 import type { LimitBreach } from "@/types";
 import { apiFetch } from "./fetch";
-import {CONSTANTS} from "@/lib/constants";
+import { CONSTANTS } from "@/lib/constants";
+
+export interface AcknowledgeBreachPayload {
+  acknowledgedBy: string;
+  resolution?: string;
+}
 
 export async function getOpenBreaches(): Promise<LimitBreach[]> {
-  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breaches}?status=OPEN`);
+  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breachesApi}?status=OPEN`);
 }
 
 export async function getBreaches(params?: {
@@ -13,5 +18,18 @@ export async function getBreaches(params?: {
   const qs = new URLSearchParams();
   if (params?.status) qs.set("status", params.status);
   if (params?.portfolioId) qs.set("portfolioId", String(params.portfolioId));
-  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breaches}?${qs}`);
+  return apiFetch<LimitBreach[]>(`${CONSTANTS.routes.breachesApi}?${qs}`);
+}
+
+export async function acknowledgeBreach(
+  breachId: number,
+  payload: AcknowledgeBreachPayload
+): Promise<LimitBreach> {
+  return apiFetch<LimitBreach>(`${CONSTANTS.routes.breachesApi}/${breachId}/acknowledge`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 }

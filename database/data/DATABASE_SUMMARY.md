@@ -110,7 +110,7 @@
   - 10_data_risk_metrics.sql - Risk metrics (20 records, bonds to position)
   - 11_data_stress_results.sql - Stress results (10 records, bonds to portfolio, scenario, instrument)
   - 12_data_risk_limits.sql - Limits (10 records, bonds to portfolio)
-  - 13_data_limit_breaches.sql - Breaches (4 records, bonds to limit, portfolio)
+  - 13_data_limit_breaches.sql - Breaches (7 records, bonds to limit, portfolio)
   - 14_data_price_history.sql - Price history (33 records, bonds to instrument)
   - 15_data_exposure_snapshots.sql - Snapshots (60 records, bonds to portfolio)
   - 16_create_views.sql - 6 views for analysis
@@ -163,4 +163,3 @@
 - Daily automated risk snapshots
 - Limit breach detection and tracking
 - Extensible schema (easy to add new asset classes, currencies)
-
