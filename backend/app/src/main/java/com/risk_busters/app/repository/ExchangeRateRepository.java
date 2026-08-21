@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+
 @Repository
 public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Integer> {
 
@@ -27,5 +28,6 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
         String fromCurrency,
         String toCurrency
     );
-}
 
+    List<ExchangeRate> findByFromCurrencyCurrencyCodeAndEffectiveDate(String fromCurrencyCode, LocalDate effectiveDate);
+}
