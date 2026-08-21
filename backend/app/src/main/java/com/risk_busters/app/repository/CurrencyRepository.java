@@ -10,5 +10,7 @@ import java.util.List;
 public interface CurrencyRepository extends JpaRepository<Currency, String> {
 
     List<Currency> findByIsActiveTrue();
+
+    boolean existsByCurrencyCode(String currencyCode);
 }
 
