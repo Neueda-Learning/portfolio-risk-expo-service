@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 import { BreachItem } from "./BreachItem";
+import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
 import type { LimitBreach, Portfolio } from "@/types";
 
@@ -10,6 +12,7 @@ interface BreachPortfolioGroupProps {
   portfolio: Portfolio;
   breaches: LimitBreach[];
   onBreachAccepted: (breachId: number) => Promise<void>;
+  loadingBreachIds?: Set<number>;
   acceptedBreachIds?: Set<number>;
 }
 
@@ -17,6 +20,7 @@ export function BreachPortfolioGroup({
   portfolio,
   breaches,
   onBreachAccepted,
+  loadingBreachIds = new Set(),
   acceptedBreachIds = new Set(),
 }: BreachPortfolioGroupProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -25,13 +29,20 @@ export function BreachPortfolioGroup({
     <div className="w-full rounded-lg border border-[#e5e7eb] bg-white shadow-sm overflow-hidden">
       {/* Portfolio header */}
       <button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
       >
         <div className="min-w-0 flex-1">
           <p className="text-xs font-mono text-gray-400">{portfolio.portfolioCode}</p>
           <h3 className="mt-0.5 truncate text-sm font-semibold text-gray-900">
-            {portfolio.portfolioName}
+            <Link
+              href={`${CONSTANTS.routes.home}portfolios/${portfolio.portfolioId}`}
+              className="shrink-0 text-[#2660a6] hover:underline"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {portfolio.portfolioName}
+            </Link>
           </h3>
           <p className="mt-1 text-xs text-gray-500">
             {breaches.length}{" "}
@@ -57,7 +68,8 @@ export function BreachPortfolioGroup({
               key={breach.breachId}
               breach={breach}
               onAccept={onBreachAccepted}
-              isLoading={acceptedBreachIds.has(breach.breachId)}
+              isLoading={loadingBreachIds.has(breach.breachId)}
+              isAcknowledged={breach.status === "ACKNOWLEDGED" || acceptedBreachIds.has(breach.breachId)}
             />
           ))}
         </div>

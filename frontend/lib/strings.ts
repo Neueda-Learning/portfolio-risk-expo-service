@@ -25,6 +25,7 @@ export const STRINGS = {
     breachSingular: "breach",
     breachPlural: "breaches",
     acceptButton: "Accept",
+    acceptedButton: "Accepted",
     openBreachSingular: "open breach",
     openBreachPlural: "open breaches",
     acceptedBreachSingular: "accepted breach",
@@ -113,12 +114,12 @@ export const STRINGS = {
     backendUnreachableTitle: "Backend Unreachable",
     dataUnavailableTitle: "Data Unavailable",
     backendUnreachableMessage:
-      "The portfolio service at 127.0.0.1:8080 could not be reached.",
+      "The backend could not be reached.",
     dataUnavailableMessage: "An error occurred while loading portfolio data.",
     tryAgain: "Try again",
   },
   api: {
-    backendUnreachablePrefix: "Could not reach the backend at",
+    backendUnreachablePrefix: "Could not reach the backend",
     backendReturnedPrefix: "Backend returned",
     backendRunningQuestion: "Is the server running?",
   },

@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <>
-      <AutoRefresh everyMs={30000} />
+      {/*<AutoRefresh everyMs={30000} />*/}
       <html lang="en" className={inter.variable}>
       <body className={`${inter.className} min-h-screen bg-[#f4f4f2]`}>
         {/* ── Top Navigation Bar ─────────────────────────────────────── */}
