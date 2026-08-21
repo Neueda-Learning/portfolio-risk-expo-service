@@ -13,7 +13,6 @@ interface BreachPortfolioGroupProps {
   breaches: LimitBreach[];
   onBreachAccepted: (breachId: number) => Promise<void>;
   loadingBreachIds?: Set<number>;
-  acceptedBreachIds?: Set<number>;
 }
 
 export function BreachPortfolioGroup({
@@ -21,7 +20,6 @@ export function BreachPortfolioGroup({
   breaches,
   onBreachAccepted,
   loadingBreachIds = new Set(),
-  acceptedBreachIds = new Set(),
 }: BreachPortfolioGroupProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -69,7 +67,7 @@ export function BreachPortfolioGroup({
               breach={breach}
               onAccept={onBreachAccepted}
               isLoading={loadingBreachIds.has(breach.breachId)}
-              isAcknowledged={breach.status === "ACKNOWLEDGED" || acceptedBreachIds.has(breach.breachId)}
+              isAcknowledged={breach.status === "ACKNOWLEDGED"}
             />
           ))}
         </div>

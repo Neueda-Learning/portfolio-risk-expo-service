@@ -3,100 +3,73 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BreachesTabs } from "./BreachesTabs";
 import { BreachPortfolioGroup } from "./BreachPortfolioGroup";
-import { acknowledgeBreach } from "@/lib/api/breaches";
+import { acknowledgeBreach, getBreaches } from "@/lib/api/breaches";
 import { STRINGS } from "@/lib/strings";
 import type { LimitBreach, Portfolio } from "@/types";
 
-const ACCEPTED_BREACH_IDS_STORAGE_KEY = "breach-accepted-ids";
-
 interface BreachesPageProps {
-  allBreaches: LimitBreach[];
+  initialAllBreaches: LimitBreach[];
   portfolios: Portfolio[];
 }
 
-export function BreachesPage({ allBreaches, portfolios }: BreachesPageProps) {
+export function BreachesPage({ initialAllBreaches, portfolios }: BreachesPageProps) {
   const [activeTab, setActiveTab] = useState<"breaches" | "accepted">("breaches");
-  const [acceptedBreachIds, setAcceptedBreachIds] = useState<Set<number>>(new Set());
+  const [allBreaches, setAllBreaches] = useState<LimitBreach[]>(initialAllBreaches);
   const [loadingBreachIds, setLoadingBreachIds] = useState<Set<number>>(new Set());
   const [error, setError] = useState<string | null>(null);
-  const [hasHydratedAcceptedIds, setHasHydratedAcceptedIds] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
+  // Fetch both OPEN and ACKNOWLEDGED breaches on mount
   useEffect(() => {
-   try {
-     const stored = localStorage.getItem(ACCEPTED_BREACH_IDS_STORAGE_KEY);
-     console.log("[Hydration] localStorage read:", { key: ACCEPTED_BREACH_IDS_STORAGE_KEY, stored });
-     if (stored) {
-       const parsed = JSON.parse(stored);
-       if (Array.isArray(parsed)) {
-         setAcceptedBreachIds(
-           new Set(parsed.filter((value): value is number => typeof value === "number"))
-         );
-         console.log("[Hydration] acceptedBreachIds set from localStorage:", parsed);
-       }
-     } else {
-       console.log("[Hydration] localStorage key not found or empty");
+   const fetchAllBreaches = async () => {
+     setIsFetching(true);
+     try {
+       // Fetch OPEN and ACKNOWLEDGED breaches
+       const [openBreaches, acknowledgedBreaches] = await Promise.all([
+         getBreaches({ status: "OPEN" }),
+         getBreaches({ status: "ACKNOWLEDGED" }),
+       ]);
+       // Combine both lists
+       setAllBreaches([...openBreaches, ...acknowledgedBreaches]);
+     } catch (err) {
+       console.error("Failed to fetch breaches:", err);
+       setError("Failed to load breaches");
+     } finally {
+       setIsFetching(false);
      }
-   } catch (err) {
-     console.error("Failed to read accepted breaches from localStorage", err);
-   } finally {
-     setHasHydratedAcceptedIds(true);
-     console.log("[Hydration] hydration complete");
-   }
+   };
+
+   fetchAllBreaches();
   }, []);
 
-  useEffect(() => {
-   if (!hasHydratedAcceptedIds) {
-     return;
-   }
-
-   // Don't persist empty set on initial hydration
-   if (acceptedBreachIds.size === 0) {
-     return;
-   }
-
-   try {
-     const data = Array.from(acceptedBreachIds);
-     console.log("[Persist] Writing to localStorage:", { key: ACCEPTED_BREACH_IDS_STORAGE_KEY, data });
-     localStorage.setItem(
-       ACCEPTED_BREACH_IDS_STORAGE_KEY,
-       JSON.stringify(data)
-     );
-     console.log("[Persist] Write complete");
-   } catch (err) {
-     console.error("[Persist] Failed to write to localStorage:", err);
-   }
-  }, [acceptedBreachIds, hasHydratedAcceptedIds]);
-
   const isBreachAccepted = useCallback(
-   (breach: LimitBreach) =>
-     breach.status === "ACKNOWLEDGED" || acceptedBreachIds.has(breach.breachId),
-   [acceptedBreachIds]
+   (breach: LimitBreach) => breach.status === "ACKNOWLEDGED",
+   []
   );
+
+  // Filter breaches by active tab
+  const filteredBreaches = useMemo(() => {
+   return allBreaches.filter((breach) => {
+     if (activeTab === "breaches") {
+       return breach.status === "OPEN";
+     } else {
+       return breach.status === "ACKNOWLEDGED";
+     }
+   });
+  }, [allBreaches, activeTab]);
 
   const breachesForActiveTabByPortfolio = useMemo(() => {
     const grouped = new Map<number, LimitBreach[]>();
 
-    allBreaches.forEach((breach) => {
-      const accepted = isBreachAccepted(breach);
-      
-      // Breaches tab: show ONLY NOT accepted
-      // Accepted tab: show ONLY accepted
-      if (activeTab === "breaches" && accepted) {
-        return;
-      }
-      if (activeTab === "accepted" && !accepted) {
-        return;
-      }
-
+    filteredBreaches.forEach((breach) => {
       if (!grouped.has(breach.portfolioId)) {
         grouped.set(breach.portfolioId, []);
       }
-
       grouped.get(breach.portfolioId)!.push(breach);
     });
 
     return grouped;
-  }, [allBreaches, activeTab, isBreachAccepted]);
+  }, [filteredBreaches]);
 
   const portfoliosWithBreaches = useMemo(() => {
    return portfolios.filter((portfolio) => breachesForActiveTabByPortfolio.has(portfolio.portfolioId));
@@ -108,16 +81,21 @@ export function BreachesPage({ allBreaches, portfolios }: BreachesPageProps) {
      setError(null);
 
      try {
-       await acknowledgeBreach(breachId, {
+       const response = await acknowledgeBreach(breachId, {
          acknowledgedBy: "frontend",
          resolution: "Accepted via Breach Management",
        });
 
-       setAcceptedBreachIds((prev) => {
-         const next = new Set(prev);
-         next.add(breachId);
-         return next;
-       });
+       // Update allBreaches with the acknowledged breach
+       setAllBreaches((prev) =>
+         prev.map((breach) =>
+           breach.breachId === breachId
+             ? { ...breach, status: "ACKNOWLEDGED" as const }
+             : breach
+         )
+       );
+
+       // Switch to Accepted tab to show the newly acknowledged breach
        setActiveTab("accepted");
      } catch (err) {
        console.error("Failed to acknowledge breach", err);
@@ -133,8 +111,8 @@ export function BreachesPage({ allBreaches, portfolios }: BreachesPageProps) {
    []
   );
 
-  const breachesCount = allBreaches.filter((breach) => !isBreachAccepted(breach)).length;
-  const acceptedCount = allBreaches.filter((breach) => isBreachAccepted(breach)).length;
+  const breachesCount = allBreaches.filter((breach) => breach.status === "OPEN").length;
+  const acceptedCount = allBreaches.filter((breach) => breach.status === "ACKNOWLEDGED").length;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -191,7 +169,6 @@ export function BreachesPage({ allBreaches, portfolios }: BreachesPageProps) {
                   breaches={breaches}
                   onBreachAccepted={handleBreachAccepted}
                   loadingBreachIds={loadingBreachIds}
-                  acceptedBreachIds={acceptedBreachIds}
                 />
               );
             })}

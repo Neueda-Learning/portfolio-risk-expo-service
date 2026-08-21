@@ -10,5 +10,5 @@ export default async function BreachesRoute() {
     getBreaches(),
   ]);
 
-  return <BreachesPage allBreaches={allBreaches} portfolios={portfolios} />;
+  return <BreachesPage initialAllBreaches={allBreaches} portfolios={portfolios} />;
 }
