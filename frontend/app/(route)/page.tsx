@@ -4,11 +4,13 @@ export const dynamic = "force-dynamic";
 import { getPortfolios, getOpenBreaches } from "@/lib/api";
 import { DashboardPortfolioSection } from "@/components/dashboard/DashboardPortfolioSection";
 import { GlobalAlertsPanel } from "@/components/dashboard/GlobalAlertsPanel";
+import { getExchangeRatesForBaseCurrency } from "@/lib/api/fxRates";
 
 export default async function DashboardPage() {
-  const [portfolios, openBreaches] = await Promise.all([
+  const [portfolios, openBreaches, exchangeRates] = await Promise.all([
     getPortfolios(),
     getOpenBreaches(),
+    getExchangeRatesForBaseCurrency({ baseCurrency: "USD" })
   ]);
 
   const breachCountByPortfolio = openBreaches.reduce<Record<number, number>>(
