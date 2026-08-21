@@ -50,7 +50,7 @@ CREATE TABLE stress_scenario (
 );
 
 CREATE TABLE exchange_rate (
-    rate_id INTEGER PRIMARY KEY,
+    rate_id SERIAL PRIMARY KEY,
     from_currency CHAR(3) NOT NULL,
     to_currency CHAR(3) NOT NULL,
     rate DECIMAL(12,6) NOT NULL,
