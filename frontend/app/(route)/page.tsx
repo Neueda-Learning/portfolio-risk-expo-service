@@ -26,7 +26,6 @@ export default async function DashboardPage() {
       <DashboardPortfolioSection
         portfolios={activePortfolios}
         breachCountByPortfolio={breachCountByPortfolio}
-        openBreachesCount={openBreaches.length}
       />
 
       <GlobalAlertsPanel breaches={openBreaches} />
