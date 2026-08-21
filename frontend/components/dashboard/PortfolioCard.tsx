@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, ChevronRight, Users } from "lucide-react";
-import { PortfolioTypeBadge } from "@/components/ui/PortfolioTypeBadge";
-import { MetricCell } from "@/components/ui/MetricCell";
+import { PortfolioTypeBadge } from "@/components/shared/PortfolioTypeBadge";
+import { MetricCell } from "@/components/shared/MetricCell";
 import { formatCurrency } from "@/lib/format";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";

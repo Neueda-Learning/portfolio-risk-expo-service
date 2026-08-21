@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
-import { SeverityBadge } from "@/components/ui/SeverityBadge";
+import { SeverityBadge } from "@/components/shared/SeverityBadge";
 import { formatCurrency } from "@/lib/format";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";

@@ -3,7 +3,7 @@
 import { STRINGS } from "@/lib/strings";
 import { formatCurrency, formatDecimal } from "@/lib/format";
 import type { PortfolioStatsData } from "@/types";
-import { PortfolioTable } from "@/components/ui/PortfolioTable";
+import { PortfolioTable } from "@/components/shared/PortfolioTable";
 
 function StatCard({
   label,

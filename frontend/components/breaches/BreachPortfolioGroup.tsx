@@ -22,11 +22,11 @@ export function BreachPortfolioGroup({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="rounded-lg border border-[#e5e7eb] bg-white shadow-sm overflow-hidden">
+    <div className="w-full rounded-lg border border-[#e5e7eb] bg-white shadow-sm overflow-hidden">
       {/* Portfolio header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between gap-3 p-4 hover:bg-gray-50 transition-colors text-left"
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50"
       >
         <div className="min-w-0 flex-1">
           <p className="text-xs font-mono text-gray-400">{portfolio.portfolioCode}</p>
@@ -51,7 +51,7 @@ export function BreachPortfolioGroup({
 
       {/* Breaches list (expanded) */}
       {isExpanded && (
-        <div className="border-t border-[#e5e7eb] p-4 bg-gray-50 space-y-3">
+        <div className="border-t border-[#e5e7eb] pt-2 pb-4 px-4 bg-gray-50 space-y-3">
           {breaches.map((breach) => (
             <BreachItem
               key={breach.breachId}

@@ -5,7 +5,7 @@ import { BarChart2 } from "lucide-react";
 import "../globals.css";
 import { CONSTANTS } from "@/lib/constants";
 import { STRINGS } from "@/lib/strings";
-import { AutoRefresh } from "@/components/common/AutoRefresh";
+import { AutoRefresh } from "@/components/utils/AutoRefresh";
 
 const inter = Inter({
   subsets: ["latin"],

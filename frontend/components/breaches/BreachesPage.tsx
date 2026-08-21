@@ -115,7 +115,7 @@ export function BreachesPage({ allBreaches, portfolios }: BreachesPageProps) {
       )}
 
       {/* Content */}
-      <div className="mx-auto max-w-4xl p-6">
+      <div className="p-6">
         {portfoliosWithBreaches.length === 0 ? (
           <div className="rounded-lg border border-dashed border-gray-200 bg-white px-4 py-12 text-center">
             <p className="text-sm text-gray-500">

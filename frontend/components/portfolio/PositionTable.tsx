@@ -4,7 +4,7 @@ import type { PortfolioPositionWithInstrument } from "@/types";
 import {
   PortfolioSortableHeader,
   PortfolioTable,
-} from "@/components/ui/PortfolioTable";
+} from "@/components/shared/PortfolioTable";
 
 interface PositionTableProps {
   positions: PortfolioPositionWithInstrument[];
