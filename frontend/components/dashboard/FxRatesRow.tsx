@@ -4,10 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { formatDecimal } from "@/lib/format";
 import type { ExchangeRate } from "@/types";
+import {STRINGS} from "@/lib/strings";
 
 export function FxRatesRow({
 	exchangeRates,
-	baseCurrency = "USD",
+	baseCurrency = STRINGS.dashboard.baseCurrency,
 }: {
 	exchangeRates: ExchangeRate[];
 	baseCurrency?: string;
@@ -60,7 +61,7 @@ export function FxRatesRow({
 			<div className="flex items-center justify-between gap-3 border-b border-[#e5e7eb] px-4 py-3">
 				<h2 className="flex items-center gap-1.5 text-sm font-bold text-gray-900">
 					<BarChart3 className="h-4 w-4 text-[#2660a6]" aria-hidden="true" />
-					FX Rates
+					{STRINGS.dashboard.fxRates}
 				</h2>
 				<button
 					type="button"
@@ -68,14 +69,14 @@ export function FxRatesRow({
 					disabled={baseCurrencies.length === 0}
 					className="rounded-full bg-[#2660a6]/10 px-2 py-0.5 text-xs font-semibold text-[#2660a6] transition hover:bg-[#2660a6]/15 disabled:cursor-not-allowed disabled:opacity-60"
 				>
-					Base {activeBaseCurrency}
+					{STRINGS.dashboard.base} {activeBaseCurrency}
 				</button>
 			</div>
 
 			<div className="overflow-x-auto px-3 py-3">
 				{rates.length === 0 ? (
 					<p className="py-4 text-center text-sm text-gray-400">
-						No FX rates available for {activeBaseCurrency}.
+						{STRINGS.dashboard.currencyError} {activeBaseCurrency}.
 					</p>
 				) : (
 					<div className="flex min-w-max gap-2">
