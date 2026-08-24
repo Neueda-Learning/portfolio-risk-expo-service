@@ -18,6 +18,9 @@ variable "gh_org" {
   sensitive = true
   default   = "Neueda-Learning"
 }
+variable "gcp_user_email" {
+  type = string
+}
 
 variable "gh_repo" {
   type      = string
