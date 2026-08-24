@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { formatDecimal } from "@/lib/format";
 import type { ExchangeRate } from "@/types";
@@ -9,9 +12,48 @@ export function FxRatesRow({
 	exchangeRates: ExchangeRate[];
 	baseCurrency?: string;
 }) {
-	const rates = [...exchangeRates].sort((a, b) =>
-		a.toCurrency.localeCompare(b.toCurrency)
+	const baseCurrencies = useMemo(
+		() =>
+			Array.from(new Set(exchangeRates.map((rate) => rate.fromCurrency)))
+				.sort((a, b) => a.localeCompare(b)),
+		[exchangeRates]
 	);
+
+	const [selectedBaseIndex, setSelectedBaseIndex] = useState(() => {
+		const initialIndex = baseCurrencies.indexOf(baseCurrency);
+		return initialIndex >= 0 ? initialIndex : 0;
+	});
+
+	useEffect(() => {
+		if (baseCurrencies.length === 0) {
+			return;
+		}
+
+		if (selectedBaseIndex >= baseCurrencies.length) {
+			setSelectedBaseIndex(0);
+		}
+	}, [baseCurrencies, selectedBaseIndex]);
+
+	const activeBaseCurrency = baseCurrencies[selectedBaseIndex] ?? baseCurrency;
+
+	const rates = useMemo(
+		() =>
+			[...exchangeRates]
+				.filter(
+					(rate) =>
+						rate.fromCurrency.toUpperCase() === activeBaseCurrency.toUpperCase()
+				)
+				.sort((a, b) => a.toCurrency.localeCompare(b.toCurrency)),
+		[activeBaseCurrency, exchangeRates]
+	);
+
+	const cycleBaseCurrency = () => {
+		if (baseCurrencies.length === 0) {
+			return;
+		}
+
+		setSelectedBaseIndex((currentIndex) => (currentIndex + 1) % baseCurrencies.length);
+	};
 
 	return (
 		<section className="mb-6 rounded-lg border-2 border-[#2660a6] bg-white shadow-md">
@@ -20,15 +62,20 @@ export function FxRatesRow({
 					<BarChart3 className="h-4 w-4 text-[#2660a6]" aria-hidden="true" />
 					FX Rates
 				</h2>
-				<span className="rounded-full bg-[#2660a6]/10 px-2 py-0.5 text-xs font-semibold text-[#2660a6]">
-					Base {baseCurrency}
-				</span>
+				<button
+					type="button"
+					onClick={cycleBaseCurrency}
+					disabled={baseCurrencies.length === 0}
+					className="rounded-full bg-[#2660a6]/10 px-2 py-0.5 text-xs font-semibold text-[#2660a6] transition hover:bg-[#2660a6]/15 disabled:cursor-not-allowed disabled:opacity-60"
+				>
+					Base {activeBaseCurrency}
+				</button>
 			</div>
 
 			<div className="overflow-x-auto px-3 py-3">
 				{rates.length === 0 ? (
 					<p className="py-4 text-center text-sm text-gray-400">
-						No FX rates available.
+						No FX rates available for {activeBaseCurrency}.
 					</p>
 				) : (
 					<div className="flex min-w-max gap-2">

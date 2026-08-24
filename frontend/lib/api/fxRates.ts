@@ -2,8 +2,8 @@ import { apiFetch } from "./fetch";
 import { CONSTANTS } from "@/lib/constants";
 import type { ExchangeRate } from "@/types";
 
-export async function getExchangeRates(): Promise<ExchangeRate[]> {
-  return apiFetch<ExchangeRate[]>(CONSTANTS.routes.fxRatesApi);
+export async function getTodayExchangeRates(): Promise<ExchangeRate[]> {
+  return apiFetch<ExchangeRate[]>(`${CONSTANTS.routes.fxRatesApi}/today`);
 }
 
 export async function getExchangeRatesForBaseCurrency(params?: {
