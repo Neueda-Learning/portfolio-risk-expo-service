@@ -3,12 +3,15 @@ export const dynamic = "force-dynamic";
 
 import { getPortfolios, getOpenBreaches } from "@/lib/api";
 import { DashboardPortfolioSection } from "@/components/dashboard/DashboardPortfolioSection";
+import { FxRatesRow } from "@/components/dashboard/FxRatesRow";
 import { GlobalAlertsPanel } from "@/components/dashboard/GlobalAlertsPanel";
+import { getTodayExchangeRates } from "@/lib/api/fxRates";
 
 export default async function DashboardPage() {
-  const [portfolios, openBreaches] = await Promise.all([
+  const [portfolios, openBreaches, exchangeRates] = await Promise.all([
     getPortfolios(),
     getOpenBreaches(),
+    getTodayExchangeRates(),
   ]);
 
   const breachCountByPortfolio = openBreaches.reduce<Record<number, number>>(
@@ -22,13 +25,17 @@ export default async function DashboardPage() {
   const activePortfolios = portfolios.filter((p) => p.isActive);
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-      <DashboardPortfolioSection
-        portfolios={activePortfolios}
-        breachCountByPortfolio={breachCountByPortfolio}
-      />
+    <div className="flex flex-col gap-6">
+      <FxRatesRow exchangeRates={exchangeRates} baseCurrency="USD" />
 
-      <GlobalAlertsPanel breaches={openBreaches} />
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <DashboardPortfolioSection
+          portfolios={activePortfolios}
+          breachCountByPortfolio={breachCountByPortfolio}
+        />
+
+        <GlobalAlertsPanel breaches={openBreaches} />
+      </div>
     </div>
   );
 }

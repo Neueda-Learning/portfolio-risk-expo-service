@@ -8,5 +8,6 @@ export const CONSTANTS = {
     breaches: "/breaches",
     breachesApi: "/api/limits/breaches",
     portfolios: "/api/portfolios",
+    fxRatesApi: "/api/fx-rates",
   },
 } as const;

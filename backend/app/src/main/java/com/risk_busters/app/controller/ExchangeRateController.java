@@ -25,5 +25,9 @@ public class ExchangeRateController {
     public ResponseEntity<List<ExchangeRateDTO>> getExchangeRatesByFromCurrencyCode(@PathVariable String fromCurrencyCode){
         return ResponseEntity.ok(exchangeRateService.getExchangeRatesByBaseCurrencyCode(fromCurrencyCode));
     }
+    @GetMapping("/today")
+    public ResponseEntity<List<ExchangeRateDTO>> getAllExchangeRatesByDateToday(){
+        return ResponseEntity.ok(exchangeRateService.getAllExchangeRatesByDateToday());
+    }
 
 }

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +16,5 @@ public class ExchangeRateDTO {
     private String fromCurrency;
     private String toCurrency;
     private BigDecimal rate;
+    private LocalDate effectiveDate;
 }

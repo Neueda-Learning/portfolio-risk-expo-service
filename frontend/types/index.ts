@@ -151,3 +151,9 @@ export interface LimitBreach {
   status: BreachStatus;
   limitType?: string;
 }
+
+export interface ExchangeRate {
+  fromCurrency: string;
+  toCurrency: string;
+  rate: number;
+}
