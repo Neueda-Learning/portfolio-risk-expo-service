@@ -1,0 +1,39 @@
+name: GCP Cloud Run Deployment [BACKEND]
+
+on:
+  workflow_run:
+    workflows: ["BUILD_AND_PUSH"] #REPLACE WITH REAL WORKFLOW NAME
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'The tag from GHCR to deploy'
+        required: true
+        default: 'latest'
+env:
+  PROJECT_ID: "project-7ff52764-7883-4474-b19" #Make it repo env var later
+  REGION: "europe-west1"
+  GHCR_IMAGE: "ghcr.io/${{ github.repository }}/backend"
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Only run if the CI pipeline was successful (skip if it failed)
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    permissions:
+      contents: read
+      id-token: write
+  steps:
+    - name: Authenticate to GCP
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: 'projects/${{ env.PROJECT_ID }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+        service_account: 'github-actions-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v3
+      with:
+        service: 'backend-service'
+        image: ${{ env.GHCR_IMAGE }}:${{ github.event.inputs.image_tag }}
+  
