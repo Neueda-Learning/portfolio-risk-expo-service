@@ -1,6 +1,7 @@
 package com.risk_busters.app.repository;
 
 import com.risk_busters.app.model.ExchangeRate;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -30,4 +31,5 @@ public interface ExchangeRateRepository extends JpaRepository<ExchangeRate, Inte
     );
 
     List<ExchangeRate> findByFromCurrencyCurrencyCodeAndEffectiveDate(String fromCurrencyCode, LocalDate effectiveDate);
+    List<ExchangeRate> findAllByEffectiveDate(LocalDate effectiveDate);
 }

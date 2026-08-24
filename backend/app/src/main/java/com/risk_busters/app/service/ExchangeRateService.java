@@ -25,11 +25,26 @@ public class ExchangeRateService {
                         .fromCurrency(exchangeRate.getFromCurrency().getCurrencyCode())
                         .toCurrency(exchangeRate.getToCurrency().getCurrencyCode())
                         .rate(exchangeRate.getRate())
+                        .effectiveDate(exchangeRate.getEffectiveDate())
                         .build())
                 .toList();
         log.info("Exchange rates retrieval completed. Found {} exchange rates", exchangeRates.size());
         return exchangeRates;
     }
+    public List<ExchangeRateDTO> getAllExchangeRatesByDateToday(){
+        log.info("Exchange rates retrieval started for date: {}", LocalDate.now());
+        List<ExchangeRateDTO> exchangeRates = exchangeRateRepository.findAllByEffectiveDate(LocalDate.now()).stream()
+                .map(exchangeRate -> ExchangeRateDTO.builder()
+                        .fromCurrency(exchangeRate.getFromCurrency().getCurrencyCode())
+                        .toCurrency(exchangeRate.getToCurrency().getCurrencyCode())
+                        .rate(exchangeRate.getRate())
+                        .effectiveDate(exchangeRate.getEffectiveDate())
+                        .build())
+                .toList();
+        log.info("Exchange rates retrieval completed. Found {} exchange rates for date {}", exchangeRates.size(), LocalDate.now());
+        return exchangeRates;
+    }
+
 
     public List<ExchangeRateDTO> getExchangeRatesByBaseCurrencyCode(String fromCurrencyCode){
         log.info("Exchange rates retrieval started for base currency: {}", fromCurrencyCode);
