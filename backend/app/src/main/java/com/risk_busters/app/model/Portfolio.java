@@ -3,8 +3,11 @@ package com.risk_busters.app.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -13,7 +16,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "portfolio")
-@Data
+@Getter
+@Setter
+@ToString(exclude = {"positions", "limits"})
+@EqualsAndHashCode(exclude = {"positions", "limits"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

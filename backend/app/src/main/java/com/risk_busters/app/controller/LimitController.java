@@ -25,21 +25,33 @@ public class LimitController {
     private final LimitBreachPersistenceService limitBreachPersistenceService;
     private final PortfolioRepository portfolioRepository;
 
+    @GetMapping
+    public ResponseEntity<List<LimitDetailDTO>> getAllLimits(){
+        return ResponseEntity.ok(limitService.getAllLimits());
+    }
+
     @GetMapping("/breaches")
-    public ResponseEntity<LimitBreachResponseDTO> getLimitBreaches(
+    public ResponseEntity<List<LimitBreachDTO>> getLimitBreaches(
             @RequestParam(name = "status", defaultValue = "OPEN") LimitBreachStatus status) {
-        LimitBreachResponseDTO breaches = limitService.getLimitBreachesByStatus(status);
+        List<LimitBreachDTO> breaches = limitService.getLimitBreachesByStatus(status);
         return ResponseEntity.ok(breaches);
     }
 
-    @PatchMapping("/breaches/{id}/acknowledge")
+    @PatchMapping("/{limitId}/breaches/acknowledgeLatest")
     public ResponseEntity<AcknowledgeLimitResponseDTO> acknowledgeLimitResponse(
-            @PathVariable Integer id,
+            @PathVariable Integer limitId,
             @RequestBody AcknowledgeLimitRequestDTO request) {
-        AcknowledgeLimitResponseDTO acknowledgment = limitService.acknowledgeLimitBreach(id, request);
+        AcknowledgeLimitResponseDTO acknowledgment = limitService.acknowledgeLatestLimitBreachInLimit(limitId, request);
         return ResponseEntity.ok(acknowledgment);
     }
 
+    @PatchMapping("/breaches/{breachId}/acknowledge")
+    public ResponseEntity<AcknowledgeLimitResponseDTO> acknowledgeSingularLimitBreach(
+            @PathVariable Integer breachId,
+            @RequestBody AcknowledgeLimitRequestDTO request) {
+        AcknowledgeLimitResponseDTO acknowledgment = limitService.acknowledgeLimitBreachById(breachId, request);
+        return ResponseEntity.ok(acknowledgment);
+    }
     @PostMapping("/check")
     public ResponseEntity<LimitCheckResponseDTO> runAllLimitCheck(){
         Map<Integer, List<LimitCheckResultDTO>> resultsByPortfolio = limitComparisonService.compareAllLimitsInAllPortfolios();

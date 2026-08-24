@@ -3,8 +3,8 @@ package com.risk_busters.app.service;
 import com.risk_busters.app.dto.*;
 import com.risk_busters.app.exceptions.InsufficientPriceHistoryException;
 import com.risk_busters.app.exceptions.ResourceNotFoundException;
+import com.risk_busters.app.mapper.LimitMapper;
 import com.risk_busters.app.model.*;
-import com.risk_busters.app.exceptions.PortfolioNotFoundException;
 import com.risk_busters.app.repository.LimitRepository;
 import com.risk_busters.app.repository.PriceHistoryRepository;
 import com.risk_busters.app.repository.PortfolioRepository;
@@ -37,6 +37,8 @@ public class PortfolioRiskService {
     private final PositionRepository positionRepository;
     private final LimitRepository limitRepository;
     private final PriceHistoryRepository priceHistoryRepository;
+    private final LimitMapper limitMapper;
+
     /**
      * Calculate total exposure for a portfolio by summing position values
      */
@@ -304,36 +306,8 @@ public class PortfolioRiskService {
      * Build limit detail with current utilisation
      */
     private LimitDetailDTO buildLimitDetail(Limit limit, BigDecimal totalExposure) {
-        BigDecimal currentValue = limit.getCurrentValue() != null ? limit.getCurrentValue() : totalExposure;
-        BigDecimal utilisationPct = limit.getUtilisationPct();
+        return limitMapper.toDto(limit, totalExposure);
 
-        if (utilisationPct == null
-                && currentValue != null
-                && limit.getLimitValue() != null
-                && limit.getLimitValue().compareTo(BigDecimal.ZERO) > 0) {
-            utilisationPct = currentValue
-                    .divide(limit.getLimitValue(), 4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"));
-        }
-
-        boolean isBreached = LimitStatus.BREACH.equals(limit.getStatus())
-                || (currentValue != null
-                && limit.getLimitValue() != null
-                && currentValue.compareTo(limit.getLimitValue()) > 0);
-        
-        return LimitDetailDTO.builder()
-                .limitId(limit.getLimitId())
-                .limitType(limit.getLimitType() != null ? limit.getLimitType().name() : null)
-                .limitMetric(limit.getLimitMetric())
-                .limitValue(limit.getLimitValue())
-                .warningThreshold(limit.getWarningThreshold())
-                .currentValue(currentValue)
-                .utilisationPct(utilisationPct)
-                .status(limit.getStatus() != null ? limit.getStatus().name() : null)
-                .effectiveFrom(limit.getEffectiveFrom())
-                .effectiveTo(limit.getEffectiveTo())
-                .isBreached(isBreached)
-                .build();
     }
 
     private double calculate1DayHistoricalVaR(List<Double> historicalPrices,
@@ -383,7 +357,7 @@ public class PortfolioRiskService {
         return portfolioRepository.findById(portfolioId)
                 .orElseThrow(() -> {
                     log.error("Portfolio lookup failed: portfolioId={} reason=Portfolio not found", portfolioId);
-                    return new PortfolioNotFoundException(portfolioId);
+                    return new ResourceNotFoundException("Portfolio not found with id: " + portfolioId);
                 });
     }
     private boolean isWarningApproaching(LimitDetailDTO detail) {
@@ -398,5 +372,43 @@ public class PortfolioRiskService {
         return detail.getUtilisationPct() != null
                 && detail.getUtilisationPct().compareTo(new BigDecimal("90")) >= 0;
     }
-}
 
+    public List<PortfoliosDTO> getAllPortfolios() {
+        List<Portfolio> portfolios = portfolioRepository.findAll();
+        if (portfolios.isEmpty()){
+            log.warn("No portfolios found");
+        }else{
+            log.info("Portfolios retrieval finished. Found: {}", portfolios.size());
+        }
+        return portfolios.stream()
+                .map(portfolio -> new PortfoliosDTO(
+                        portfolio.getPortfolioId(),
+                        portfolio.getPortfolioCode(),
+                        portfolio.getPortfolioName(),
+                        portfolio.getPortfolioType(),
+                        portfolio.getBaseCurrency(),
+                        portfolio.getAum(),
+                        portfolio.getBenchmark(),
+                        portfolio.getRiskMandate(),
+                        portfolio.getManager(),
+                        portfolio.getIsActive()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public PortfoliosDTO getPortfolioById(Integer id) {
+        Portfolio portfolio = loadPortfolio(id);
+        return new PortfoliosDTO(
+                portfolio.getPortfolioId(),
+                portfolio.getPortfolioCode(),
+                portfolio.getPortfolioName(),
+                portfolio.getPortfolioType(),
+                portfolio.getBaseCurrency(),
+                portfolio.getAum(),
+                portfolio.getBenchmark(),
+                portfolio.getRiskMandate(),
+                portfolio.getManager(),
+                portfolio.getIsActive()
+        );
+    }
+}
