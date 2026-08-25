@@ -2,7 +2,7 @@ name: GCP Cloud Run Deployment [BACKEND]
 
 on:
   workflow_run:
-    workflows: ["BUILD_AND_PUSH"] #REPLACE WITH REAL WORKFLOW NAME
+    workflows: ["Build and Push Artifacts"]
     types:
       - completed
   workflow_dispatch:
