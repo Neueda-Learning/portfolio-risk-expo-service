@@ -12,7 +12,8 @@ on:
         required: true
         default: 'latest'
 env:
-  PROJECT_ID: "7ff52764-7883-4474-b19" #Make it repo env var later
+  PROJECT_ID: "project-7ff52764-7883-4474-b19" #Make it repo env var later
+  PROJECT_NUMBER: "36155288499"
   REGION: "europe-west1"
   IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image_tag || github.event.workflow_run.head_sha }}
 
@@ -32,7 +33,7 @@ jobs:
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: 'projects/${{ env.PROJECT_ID }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+          workload_identity_provider: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
           service_account: 'github-actions-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
 
       - name: Deploy to Cloud Run [BACKEND]
