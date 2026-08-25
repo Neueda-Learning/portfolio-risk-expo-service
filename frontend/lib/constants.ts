@@ -1,6 +1,6 @@
 export const CONSTANTS = {
   api: {
-    baseUrl: "http://127.0.0.1:8080",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
     revalidateSeconds: 30,
   },
   routes: {

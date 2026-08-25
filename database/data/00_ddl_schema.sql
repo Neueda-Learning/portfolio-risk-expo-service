@@ -127,7 +127,7 @@ CREATE TABLE price_history (
 );
 
 CREATE TABLE exposure_snapshot (
-    snapshot_id INTEGER PRIMARY KEY,
+    snapshot_id SERIAL PRIMARY KEY,
     portfolio_id INTEGER NOT NULL,
     snapshot_date DATE NOT NULL,
     total_exposure DECIMAL(15,2) NOT NULL,
