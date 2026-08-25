@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Stored Procedures Definition (PostgreSQL Version)
---
--- Database stored procedures for business logic
--- Load order: Load after all tables and data are populated
-
 -- ============================================================================
 -- STORED PROCEDURE 1: calculate_exposure
 -- Purpose: Sum positions × current price per portfolio; convert to base currency using exchange rates

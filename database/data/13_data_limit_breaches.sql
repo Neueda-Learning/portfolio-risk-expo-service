@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Limit Breach Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO limit_breach (breach_id, limit_id, portfolio_id, breach_date, limit_value, actual_value, excess_amount, severity, acknowledged_by, acknowledged_at, resolution, status) VALUES
 (1, 3, 3, '2026-03-19', 8000000.00, 8750000.00, 750000.00, 'CRITICAL', 'Michael Chen', '2026-03-19 14:30:00', 'Reduced position in XS2450000000 by 10%', 'RESOLVED'),

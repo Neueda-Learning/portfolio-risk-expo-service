@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Asset Class Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 09_data_asset_classes.sql
 
 INSERT INTO asset_class (asset_class_id, asset_class_code, asset_class_name, description, is_active) VALUES
 (1, 'EQUITY', 'Equity', 'Equity securities including stocks and equity derivatives', TRUE),

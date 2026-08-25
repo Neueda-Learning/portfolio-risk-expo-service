@@ -1,7 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Currency Master Data
--- Generated: 2026-03-20
--- ISO 4217 currency codes used in portfolio
 
 INSERT INTO currency (currency_code, currency_name, description, is_active) VALUES
 ('USD', 'United States Dollar', 'US Dollar - Base currency for global portfolios', TRUE),

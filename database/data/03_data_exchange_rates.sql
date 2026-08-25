@@ -1,8 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Exchange Rates Data
--- Generated: 2026-03-20
--- Currency exchange rates for multi-currency portfolio conversions
--- All rates are in the form: 1 from_currency = X to_currency
 
 INSERT INTO exchange_rate (from_currency, to_currency, rate, effective_date, source, is_active) VALUES
 ( 'GBP', 'USD', 1.2650, '2026-03-20', 'BLOOMBERG', TRUE),

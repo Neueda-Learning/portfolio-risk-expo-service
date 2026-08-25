@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Scenario Risk Factor Junction Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: ... → 05_data_stress_scenarios.sql → 13_data_scenario_risk_factors.sql → 06_data_stress_results.sql
 
 INSERT INTO scenario_risk_factor (scenario_id, factor_id, shock_value, shock_direction, description) VALUES
 -- GFC2008 Scenario (scenario_id 1)

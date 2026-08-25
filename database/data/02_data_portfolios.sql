@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Portfolio Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO portfolio (portfolio_id, portfolio_code, portfolio_name, portfolio_type, base_currency, aum, benchmark, risk_mandate, manager, is_active) VALUES
 (1, 'EQ-UK', 'UK Equity Fund', 'EQUITY', 'GBP', 1500000000.00, 'FTSE 100', 'TR: ±200bps, Max Sector: 15%', 'John Smith', TRUE),

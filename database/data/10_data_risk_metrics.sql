@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Risk Metric Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO risk_metric (metric_id, position_id, metric_date, var_1d_95, var_10d_99, pv01, cs01, delta, gamma, vega, expected_shortfall, methodology) VALUES
 (1, 1, '2026-03-20', 150000.00, 280000.00, 1250.00, 45000.00, 0.85, 0.012, 75000.00, 350000.00, 'PARAMETRIC'),

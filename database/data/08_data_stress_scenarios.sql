@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Stress Scenario Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO stress_scenario (scenario_id, scenario_code, scenario_name, scenario_type, description, equity_shock_pct, rate_shock_bps, credit_spread_shock_bps, fx_shock_pct, is_active) VALUES
 (1, 'GFC2008', '2008 Global Financial Crisis', 'HISTORICAL', 'Equities -50%, Credit spreads +300bps, Rates -100bps, VIX 80', -50.00, -100, 300, -5.00, TRUE),

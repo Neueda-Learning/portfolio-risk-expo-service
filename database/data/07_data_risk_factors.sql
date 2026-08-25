@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Risk Factor Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO risk_factor (factor_id, factor_code, factor_name, factor_type, asset_class_id, currency, current_value, previous_value, change_pct, as_of_date) VALUES
 (1, 'FTSE100', 'FTSE 100 Index', 'EQUITY_INDEX', 1, 'GBP', 7825.50, 7750.25, 0.97, '2026-03-20'),

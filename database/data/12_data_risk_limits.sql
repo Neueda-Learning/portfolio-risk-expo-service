@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Risk Limit Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO risk_limit (limit_id, portfolio_id, limit_type, limit_metric, limit_value, warning_threshold, current_value, utilisation_pct, status, effective_from, effective_to) VALUES
 (1, 1, 'VAR', 'Daily VaR (95%)', 6000000.00, 4500000.00, 5850000.00, 97.50, 'WARNING', '2025-01-01', '2026-12-31'),
