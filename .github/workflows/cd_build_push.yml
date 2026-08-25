@@ -13,6 +13,9 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Set lowercase repository name
+        run: echo "GH_REPO_LC=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -28,13 +31,13 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/${{ github.repository }}/backend:${{ github.sha }},
-                ghcr.io/${{ github.repository }}/backend:latest
+          tags: ghcr.io/${{ env.GH_REPO_LC }}/backend:${{ github.sha }},
+                ghcr.io/${{ env.GH_REPO_LC }}/backend:latest
         
       - name: Build and push [FRONTEND] image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }},
-                ghcr.io/${{ github.repository }}/frontend:latest
+          tags: ghcr.io/${{ env.GH_REPO_LC }}/frontend:${{ github.sha }},
+                ghcr.io/${{ env.GH_REPO_LC }}/frontend:latest
