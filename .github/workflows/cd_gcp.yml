@@ -14,7 +14,7 @@ on:
 env:
   PROJECT_ID: "project-7ff52764-7883-4474-b19" #Make it repo env var later
   REGION: "europe-west1"
-  GHCR_IMAGE: "ghcr.io/${{ github.repository }}/backend"
+  GHCR_IMAGE: "ghcr.io/${{ github.repository }}"
 
 
 jobs:
@@ -31,9 +31,14 @@ jobs:
       with:
         workload_identity_provider: 'projects/${{ env.PROJECT_ID }}/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
         service_account: 'github-actions-sa@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
-    - name: Deploy to Cloud Run
+    - name: Deploy to Cloud Run [BACKEND]
       uses: google-github-actions/deploy-cloudrun@v3
       with:
         service: 'backend-service'
-        image: ${{ env.GHCR_IMAGE }}:${{ github.event.inputs.image_tag }}
+        image: ${{ env.GHCR_IMAGE }}/backend:${{ github.event.inputs.image_tag }}
+    - name: Deploy to Cloud Run [FRONTEND]
+      uses: google-github-actions/deploy-cloudrun@v3
+      with:
+        service: 'frontend-service'
+        image: ${{ env.GHCR_IMAGE }}/frontend:${{ github.event.inputs.image_tag }}
   
