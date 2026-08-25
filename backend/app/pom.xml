@@ -95,6 +95,7 @@
         <dependency>
             <groupId>com.google.cloud.sql</groupId>
             <artifactId>postgres-socket-factory</artifactId>
+            <version>1.17.1</version>
         </dependency>
 	</dependencies>
 
