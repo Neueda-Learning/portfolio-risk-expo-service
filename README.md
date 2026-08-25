@@ -6,7 +6,7 @@ positions against approved risk limits, raising breaches for immediate action.
 
 ## SQL Data & Scripts
 
-The `database/` directory contains schema definitions, data seed files, and utility scripts for PostgreSQL setup and management. See [DATABASE_FINAL_SUMMARY.md](database/data/DATABASE_FINAL_SUMMARY.md) for complete schema documentation.
+The `database/` directory contains schema definitions, data seed files, and utility scripts for PostgreSQL setup and management. See [DATABASE_SUMMARY.md](database/DATABASE_SUMMARY.md) for complete schema documentation.
 
 
 ### Database Data Files (`database/data/`)
