@@ -10,6 +10,11 @@ export const STRINGS = {
     searchPlaceholder: "Search portfolios...",
     openBreachSingular: "open breach",
     openBreachPlural: "open breaches",
+    fxRates: "FX Rates",
+    baseCurrency: "USD",
+    base: "Base",
+    currencyError: "No FX rates available for"
+
   },
   alerts: {
     title: "Alerts",

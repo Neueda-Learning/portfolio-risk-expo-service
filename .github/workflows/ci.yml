@@ -24,7 +24,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - ${{ vars.DATABASE_PORT }}:${{ vars.DATABASE_PORT }}
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
@@ -40,8 +40,8 @@ jobs:
       run: mvn clean test -Dspring.profiles.active=test
       working-directory: backend/app
       env:
-        DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-        DATABASE_PORT: ${{ vars.DATABASE_PORT }}
+        DATABASE_HOST: localhost
+        DATABASE_PORT: 5432
         DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
         DATABASE_USER: ${{ secrets.DATABASE_USER }}
         DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}

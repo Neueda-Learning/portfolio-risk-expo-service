@@ -1,0 +1,87 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+.env*.local
+.vercel
+dist/
+build/
+
+# Java / Maven
+target/
+*.jar
+*.class
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+*.log
+compile.log
+compile*.log
+cleanup_compile.log
+test.log
+repo_cleanup_compile.log
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+*.code-workspace
+.project
+.classpath
+.settings/
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Build artifacts
+.gradle/
+.cache/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Environment
+.env
+.env.example
+
+# Database
+database/dumps/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate.lock.info
+.terraformrc
+terraform.rc
+
+# Documentation
+README.md
+HELP.md
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Misc
+.keep
+
