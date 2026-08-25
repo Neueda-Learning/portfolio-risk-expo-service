@@ -1,4 +1,4 @@
-name: GCP Cloud Run Deployment [BACKEND]
+name: GCP Cloud Run Deployment
 
 on:
   workflow_run:
