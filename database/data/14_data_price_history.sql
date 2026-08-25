@@ -1,9 +1,3 @@
--- Graduate Programme 2026 ??? Project 03 ?? Portfolio Risk & Exposure
--- Price History Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql ??? ... ??? 10_data_instruments.sql ??? 11_data_price_history.sql
 
 INSERT INTO price_history (price_id, instrument_id, price_date, close_price, open_price, high_price, low_price, volume, currency, source) VALUES
 -- Unilever PLC (GB00B10RZP78)

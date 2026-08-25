@@ -1,5 +1,9 @@
 # DATABASE SUMMARY
 
+## E/R Diagram
+<img width="800" alt="ERD_rm_database" src="https://github.com/user-attachments/assets/7fb9700c-40ec-404f-8bd7-3193b0701503" />
+
+
 ## Structure
 
 **15 Tables:** <br>
@@ -115,6 +119,36 @@
   - 15_data_exposure_snapshots.sql - Snapshots (60 records, bonds to portfolio)
   - 16_create_views.sql - 6 views for analysis
   - 17_create_stored_procedures.sql - 5 procedures for automation
+```
+
+## Scripts
+```bash
+# 1. Setup database and user (requires PostgreSQL admin access)
+bash database/scripts/01_db_setup.sh
+
+# 2. Load schema and data (executes all 18 SQL files in order)
+bash database/scripts/03_db_load_data.sh
+
+# 3. Connect to database
+bash database/scripts/02_db_connect.sh
+
+# 4. Delete database
+bash database/scripts/04_db_delete.sh
+
+# 5. Backup database
+bash database/scripts/05_db_dump.sh
+
+# 6. Restore database from backup
+bash database/scripts/06_db_reload.sh
+
+# 7. Rebuild indexes
+bash database/scripts/07_db_rebuild_indexes.sh
+
+# 8. Run views and export to CSV
+bash database/scripts/08_db_risk_report.sh
+
+# 9. Feed data to cloud database
+bash database/scripts/09_cloud_db_feed.sh
 ```
 
 ## Key Architectural Achievements

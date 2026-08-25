@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Stress Result Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 08_data_limit_breaches.sql
 
 INSERT INTO stress_result (result_id, portfolio_id, scenario_id, result_date, pnl_impact, pnl_impact_pct, var_pre, var_post, worst_position_instrument_id, worst_position_impact) VALUES
 (1, 1, 1, '2026-03-20', -45000000.00, -3.00, 5250000.00, 2850000.00, 2, -18500000.00),
