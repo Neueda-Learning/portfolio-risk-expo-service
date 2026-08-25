@@ -41,13 +41,6 @@ jobs:
         with:
           service: 'cloud-run-spring-boot-backend'
           image: ghcr.io/${{ env.GH_REPO_LC }}/backend:${{ env.IMAGE_TAG }}
-          env_vars: |
-            DATABASE_HOST=${{ secrets.DATABASE_HOST }}
-            DATABASE_PORT=${{ secrets.DATABASE_PORT }}
-            DATABASE_NAME=${{ secrets.DATABASE_NAME }}
-            DATABASE_USER=${{ secrets.DATABASE_USER }}
-          secrets: |
-            DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
 
       - name: Deploy to Cloud Run [FRONTEND]
         uses: google-github-actions/deploy-cloudrun@v3
