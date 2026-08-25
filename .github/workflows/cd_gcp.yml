@@ -12,7 +12,7 @@ on:
         required: true
         default: 'latest'
 env:
-  PROJECT_ID: "project-7ff52764-7883-4474-b19" #Make it repo env var later
+  PROJECT_ID: "7ff52764-7883-4474-b19" #Make it repo env var later
   REGION: "europe-west1"
   IMAGE_TAG: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.image_tag || github.event.workflow_run.head_sha }}
 
