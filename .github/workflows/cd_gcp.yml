@@ -39,12 +39,12 @@ jobs:
       - name: Deploy to Cloud Run [BACKEND]
         uses: google-github-actions/deploy-cloudrun@v3
         with:
-          service: 'backend-service'
+          service: 'cloud-run-spring-boot-backend'
           image: ghcr.io/${{ env.GH_REPO_LC }}/backend:${{ env.IMAGE_TAG }}
 
       - name: Deploy to Cloud Run [FRONTEND]
         uses: google-github-actions/deploy-cloudrun@v3
         with:
-          service: 'frontend-service'
+          service: 'nextjs-frontend'
           image: ghcr.io/${{ env.GH_REPO_LC }}/frontend:${{ env.IMAGE_TAG }}
   
