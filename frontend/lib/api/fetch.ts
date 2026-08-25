@@ -3,7 +3,9 @@ import { CONSTANTS } from "@/lib/constants";
 
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const isServer = typeof window === "undefined";
-  const url = isServer ? `${CONSTANTS.api.baseUrl}${path}` : path;
+  // Server-side: use Docker service name (backend), Client-side: use relative URL that Next.js rewrites
+  const baseUrl = isServer ? CONSTANTS.api.backendUrl : "";
+  const url = `${baseUrl}${path}`;
   const requestInit = isServer
     ? { ...init, next: { revalidate: CONSTANTS.api.revalidateSeconds } }
     : init;
@@ -20,5 +22,5 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
       `${STRINGS.api.backendReturnedPrefix} ${res.status} for ${path}.`
     );
   }
-  return res.json() as Promise<T>;
+  return await res.json() as Promise<T>;
 }

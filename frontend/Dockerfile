@@ -3,6 +3,14 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Accept build argument for API URL (default fallback)
+ARG NEXT_PUBLIC_API_URL=http://localhost:8080
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
+# Accept build argument for backend URL (for server-side requests)
+ARG BACKEND_URL=http://backend:8080
+ENV BACKEND_URL=$BACKEND_URL
+
 # Copy package files
 COPY frontend/package*.json ./
 
@@ -12,13 +20,17 @@ RUN npm ci
 # Copy application code
 COPY frontend/ .
 
-# Build Next.js application
+# Build Next.js application with environment variable
 RUN npm run build
 
 # Production stage
 FROM node:20-alpine
 
 WORKDIR /app
+
+# Accept runtime environment variable for backend URL
+ARG BACKEND_URL=http://backend:8080
+ENV BACKEND_URL=$BACKEND_URL
 
 # Install dumb-init to handle signals properly
 RUN apk add --no-cache dumb-init
@@ -34,7 +46,8 @@ COPY --from=builder /app/.next ./.next
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
+    adduser -S nextjs -u 1001 && \
+    chown -R nextjs:nodejs /app
 
 USER nextjs
 
