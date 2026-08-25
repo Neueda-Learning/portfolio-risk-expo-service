@@ -1,10 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Position Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → 02_data_positions.sql → ... → 12_data_exposure_snapshots.sql
--- NOTE: Positions now reference instrument_id (normalized to instrument table)
 
 INSERT INTO position (position_id, portfolio_id, instrument_id, position_date, quantity, market_price, market_value, market_value_base, weight_pct, cost_basis) VALUES
 (1, 1, 1, '2026-03-20', 250000, 485.50, 121375000.00, 121375000.00, 8.09, 105000000.00),

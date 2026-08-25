@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Instrument Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → ... → 09_data_asset_classes.sql → 10_data_instruments.sql
 
 INSERT INTO instrument (instrument_id, instrument_isin, instrument_name, asset_class_id, currency, issue_date, maturity_date, issuer, sector, is_active) VALUES
 (1, 'GB00B10RZP78', 'Unilever PLC', 1, 'GBP', NULL, NULL, 'Unilever', 'Consumer Staples', TRUE),

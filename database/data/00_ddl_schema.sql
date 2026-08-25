@@ -1,11 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- DDL Schema Definition
--- Generated: 2026-03-26 19:51:57
---
--- Table creation order: dependencies first (no FK constraints until referenced tables exist)
--- Load order: 00_ddl_schema.sql → 01_data_portfolios.sql → ... → 15_create_stored_procedures.sql
-
-
 -- LAYER 1: Base lookup tables (no dependencies)
 CREATE TABLE currency (
     currency_code CHAR(3) PRIMARY KEY,

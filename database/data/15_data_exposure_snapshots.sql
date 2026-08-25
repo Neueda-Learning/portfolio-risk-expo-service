@@ -1,9 +1,3 @@
--- Graduate Programme 2026 — Project 03 · Portfolio Risk & Exposure
--- Exposure Snapshot Data
--- Generated: 2026-03-26 19:51:57
---
--- Consistent with DDL schema and FK requirements.
--- Load order: 00_ddl_schema.sql → ... → 11_data_price_history.sql → 12_data_exposure_snapshots.sql
 
 INSERT INTO exposure_snapshot ( portfolio_id, snapshot_date, total_exposure, var_1day_95, var_1day_99, var_10day_99, largest_position_pct, currency, num_positions, concentration_herfindahl) VALUES
 -- Portfolio 1: UK Equity Fund (EQ-UK)
