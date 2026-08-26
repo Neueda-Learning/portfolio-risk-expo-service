@@ -28,10 +28,6 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Accept runtime environment variable for backend URL
-ARG BACKEND_URL=http://backend:8080
-ENV BACKEND_URL=$BACKEND_URL
-
 # Install dumb-init to handle signals properly
 RUN apk add --no-cache dumb-init
 
