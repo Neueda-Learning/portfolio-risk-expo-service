@@ -27,6 +27,11 @@ resource "google_cloud_run_v2_service" "frontend" {
         name  = "NEXT_PUBLIC_API_URL"
         value = google_cloud_run_v2_service.backend.uri
       }
+
+      env {
+        name  = "BACKEND_URL"
+        value = google_cloud_run_v2_service.backend.uri
+      }
     }
   }
   lifecycle {
