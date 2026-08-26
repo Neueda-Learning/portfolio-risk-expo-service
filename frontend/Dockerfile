@@ -7,10 +7,6 @@ WORKDIR /app
 ARG NEXT_PUBLIC_API_URL=http://localhost:8080
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
-# Accept build argument for backend URL (for server-side requests)
-ARG BACKEND_URL=http://backend:8080
-ENV BACKEND_URL=$BACKEND_URL
-
 # Copy package files
 COPY frontend/package*.json ./
 
